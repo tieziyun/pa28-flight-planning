@@ -1,0 +1,850 @@
+\documentclass[a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{ragged2e}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{xcolor}
+\usepackage{lipsum}
+\usepackage{titlesec}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[
+  a4paper,
+  margin=1in
+]{geometry}
+
+
+
+% Customizing headers and footers for two-sided printing
+\pagestyle{fancy}
+\fancyhf{} % Clear all header and footer fields
+\fancyhead[LO]{{\small PA28 Checklist}} % Left header on odd pages
+\fancyhead[RE]{{\small PA28 Checklist}} % Right header on even pages
+\fancyfoot[LE,RO]{\thepage} % Page number on left (even) and right (odd) footers
+\fancyfoot[LO,RE]{} % No footer on left (odd) and right (even) footers
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Customizing section titles
+\titleformat{\section}
+  {\normalfont\Large\bfseries}{\thesection.}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}{\thesubsection.}{1em}{}
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries}{\thesubsubsection.}{1em}{}
+
+% Custom list environment to handle dot leaders
+\newenvironment{checklist}{
+  \begin{itemize}[leftmargin=*, align=left]
+    \setlength{\itemsep}{2pt}
+    \setlength{\parskip}{0pt}
+    \setlength{\parsep}{0pt}
+}{
+  \end{itemize}
+}
+
+% Custom numbered checklist environment
+\newenvironment{numberedchecklist}{
+  \begin{enumerate}[label=\arabic*., leftmargin=*, align=left]
+    \setlength{\itemsep}{2pt}
+    \setlength{\parskip}{0pt}
+    \setlength{\parsep}{0pt}
+}{
+  \end{enumerate}
+}
+
+\begin{document}
+
+\section*{Redhill \& Shoreham Aviation - Piper PA28 Checklist}
+
+Name: \makebox[5cm]{\hrulefill}
+
+31st March 2021 - Revision 1.0
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{External Checks}
+\begin{checklist}
+\item Check documents are current and correct.
+\item Visually check the aircraft’s general condition.
+\item Remove tie-down ropes, pitot head cover, chocks and any external control locks.
+\item In cold weather, remove even small accumulations of frost, ice or snow from the aircraft.
+\item Check that the aircraft is parked in a free area, so that it may easily move onto the taxyway.
+\item Check that a fire extinguisher is available.
+\end{checklist}
+
+\subsection*{1. Cockpit Preparation}
+\begin{checklist}
+\item Aircraft Documents..................................................................................................Stowed
+\item Parking Brake.................................................................................................................On
+\item I.F. Screens.............................................................................................................Stowed
+\item First Aid Kit..............................................................................................................Stowed
+\item Fire Extinguisher.................................................................................................. Checked
+\item Magneto Switches..........................................................................................................Off
+\item Avionics Master Switch..................................................................................................Off
+\item Circuit Breakers.................................................................................................... Check In
+\item Trim Indicator..................................................................................Correct Movement/Set
+\item Flying Controls.......................................................................Full Free Correct Movement
+\item Battery Switch................................................................................................................On
+\item Pitot Heat.......................................................................................................................On
+\item Fuel Contents........................................................................................................... Check
+\item Fuel selector...................................................................................................Emptier Tank
+\item Annunciator/low voltage lights................................................................................ Test/On
+\item \textit{Leave cockpit and check externally as necessary, and then re-enter cockpit before carrying out full external pre-flight inspection.}
+\item \textit{Recognition/landing lights............................................................................On/Check/Off}
+\end{checklist}
+
+\subsubsection*{1. Cockpit Preparation (Continued)}
+\begin{checklist}
+\item \textit{Anti-collision lights ......................................................................................On/Check/Off}
+\item \textit{Navigation lights...........................................................On/Check/Off (Leave on at night)}
+\item \textit{Pitot heater..................................................................................................On/Check/Off}
+\item \textit{Stall Warner.................................................................................................On/Check/Off}
+\item \textit{Panel lighting........................................................................... Check (Leave on at night)}
+\item Battery switch.................................................................................................................Off
+\item Pitot static drains....................................................................................................Operate
+\item Flaps.....................................................................................Fully Down/Check All Stages
+\end{checklist}
+
+\subsection*{2. External: Cabin Upper Fuselage}
+\begin{checklist}
+\item Door...............................................................................................................Closed Flush
+\item Starboard Windows................................................................................................... Clean
+\item Upper Fuselage....................................................................................Check/Undamaged
+\item Towbar (If Carried)..................................................................................................Stowed
+\item Baggage Door......................................................................................................... Secure
+\end{checklist}
+
+\subsection*{3. Starboard Wing}
+\begin{checklist}
+\item Flap......................................................................................................Check/Undamaged
+\item Aileron (Surface, Hinges \& Static Wicks)............................................Check/ Undamaged
+\item Wing Tip.......................................................................................................... Undamaged
+\item Strobe \& Navigation Light............................................................................... Undamaged
+\item Wing Surfaces................................................................................................. Undamaged
+\item Fuel Tank (Contents, Cap Secure, Vent, Drain, No Seepage)................................. Check
+\item Main Gear (Oleo Extension 4\textonehalf”)............................................................... Check Security
+\item Tyre (Inflation, Creep, No Damage)......................................................................... Check
+\item Brakes (Pads, No Hydraulic Leaks, Undamaged).................................................... Check
+\item Fresh Air Intake............................................................................................. Unobstructed
+\end{checklist}
+
+\subsection*{4. Nose Section}
+\begin{checklist}
+\item Windscreen............................................................................................................... Clean
+\item OAT Probe................................................................................................................ Check
+\item Oil Contents (8 Qts Min 2 Qts, Recommended Minimum 6 Qts)......... Check/Cap Secure
+\item Starboard Cowling................................................................................................... Secure
+\item Propeller/Spinner................................................................................Undamaged/Secure
+\item Air Intakes..................................................................................................... Unobstructed
+\item Alternator Belt............................................................................................. Check Tension
+\end{checklist}
+
+\subsubsection*{4. Nose Section (Continued)}
+\begin{checklist}
+\item Landing Light................................................................................................... Undamaged
+\item Nose Gear (Oleo Extension 3\textonequarter”)............................................................... Check Security
+\item Tyre (Inflation, Creep, No Damage)......................................................................... Check
+\item Brake Fluid............................................................................................................... Check
+\item Port Cowling............................................................................................................ Secure
+\item Fuel Drain.......................................................................................... Sample/No Seepage
+\item Port Window.............................................................................................................. Clean
+\end{checklist}
+
+\subsection*{5. Port Wing}
+\begin{checklist}
+\item Fresh Air Intake............................................................................................. Unobstructed
+\item Brakes (Pads, No Hydraulic Leaks, Undamaged).................................................... Check
+\item Tyre (Inflation, Creep, No Damage)......................................................................... Check
+\item Main Gear (Oleo Extension 4\textonehalf”)............................................................... Check Security
+\item Fuel Tank (Contents, Cap Secure, Vent, Drain, No Seepage)................................. Check
+\item Pitot Head/Static...............................................................................Unobstructed/Secure
+\item Stall Warning Vane..................................................................................Free/Undamaged
+\item Wing Surfaces................................................................................................. Undamaged
+\item Wing Tip.......................................................................................................... Undamaged
+\item Strobe \& Navigation Light............................................................................... Undamaged
+\item Aileron (Surface, Hinges \& Static Wicks)............................................Check/ Undamaged
+\item Flap......................................................................................................Check/Undamaged
+\end{checklist}
+
+\subsection*{6. Rear Fuselage, Fin And Stabilator}
+\begin{checklist}
+\item Radio Aerials........................................................................................................... Secure
+\item Port Fuselage \& Window.......................................................................Undamaged/Clean
+\item Fresh Air Intake........................................................................................................ Check
+\item Fin Surface..........................................................................................Undamaged/Secure
+\item Rudder \& Nav Light......................................................................................... Undamaged
+\item Stabilator.................................................................................................Free/Undamaged
+\item Air Conditioning Scoop (If Fitted).......................................................... Flush/Undamaged
+\item Starboard Fuselage \& Window.............................................................Undamaged/Clean
+\item Static Vents (If Fitted)..........................................................................Unobstructed/Clean
+\end{checklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Before Engine Start Checks}
+\begin{numberedchecklist}
+\item Flaps............................................................................................................Retracted
+\item External Checks.........................................................................................Completed
+\item Passenger Briefing....................................................................................Completed
+\item Cabin Door....................................................................................Closed \& Latched
+\item Seats............................................................................................Adjusted \& Locked
+  \begin{checklist}
+  \item Seat Backs Upright
+  \end{checklist}
+\item Seat Belts \& Shoulder Straps...........................................................Fitted \& Secure
+\item Alternate Static Selector (If Fitted)......................................................Check/Normal
+\item Flight Instruments...............................................................................Check Condition
+  \begin{checklist}
+  \item Standby Compass \& Deviation Card
+  \end{checklist}
+\item Battery Master Switch.........................................................................................On
+\item Annunciator/Low Voltage Light................................................................Check/On
+\item VAC Off Caption................................................................................................On
+\item Avionics/Radio Master Switch...........................................................................Off
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Starting}
+\begin{numberedchecklist}
+\item Anti-Collision Light...............................................................................................On
+\item Fuel Selector.........................................................................Tank With Lowest Contents
+\item Mixture.........................................................................................Exercise/Set Rich
+\item Throttle.............................................................................................Exercise/Set \textonequarter”
+\item Electric Fuel Pump...........................................................On, check pressure, Off
+\item Prime.....................................................................................................As Required \& Lock
+\item Lookout........................................................Clear All Round, Open Window “CLEAR PROP”
+\item Magnetos......................................................................................................On Both
+\item Starter..........................................................Operate \& Release as Soon as Engine Starts
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{After Start}
+\begin{numberedchecklist}
+\item Starter Warning Light...........................................Out, If Not Immediately Turn Magnetos Off
+\item Oil Pressure....................................Within 30 secs 25 PSI Minimum (If Not, Shut down)
+\item RPM................................................................................................................Set to 1200
+\item Alternator/Ammeter............................................................On \& Holding Positive Charge
+\item Low Voltage Light....................................................................................................Out
+\item Suction.......................................................Check Registering, VAC off Caption Out
+\item Annunciator Panel Lights...................................................................................All Out
+\item Fuel Pressure..........................................................................................................Check
+\item Avionics/Radio Master Switch.........................................................................On (If Fitted)
+\item Electric Trim (If Fitted)........................................................................................Check
+\item Flight Instruments.................................Check (AI erect, DI set, VSI, Turn Co-ord flag away)
+  \begin{checklist}
+  \item HSI/RMI Heading, Standby Compass/Slaving Meter
+  \end{checklist}
+\item Avionics.................................................................................Checked and Set As Required
+\item Auto-Pilot (If Fitted)...................................................................................Check and Off
+\item Magnetos................................................................................................Check at 1200 RPM
+\item Radios..........................................................Radio Check, ATIS (if available) \& Taxi Clearance
+\item Altimeters.............................................................................................Cross Check \& Set
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Taxying}
+\begin{numberedchecklist}
+\item Brakes \& Nosewheel Steering..................................Check Operation Satisfactory For Both Pilots
+\item Flight Intruments......................................During Turns Check Compass \& D.I turning in same
+  \begin{checklist}
+  \item direction, turn Indicator: Turn \& Skid. AI steady
+  \end{checklist}
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Power Checks}
+\begin{numberedchecklist}
+\item Position................................................................Into wind. Avoid Rough Ground and Loose Stones.
+  \begin{checklist}
+  \item Clear of Aircraft and Personnel
+  \end{checklist}
+\item Parking Brake...............................................................................................................On
+\item Fuel Selector............................................................................Change Tank to Fuller Tank
+\item RPM..............................................................................Check Clear All Round. Set to 2000
+\item Carb. Heat........................................................................Check Operation \& Return to Cold
+\item Magnetos........................................................Check Each Magneto in Turn. Max Permissible Drop
+  \begin{checklist}
+  \item 175 RPM; and Max. Differential is 50 RPM
+  \end{checklist}
+\item Alternator Output.....................................................................................................Check
+\item Suction........................................................................................................4.9 to 5.1” Hg.
+\item Temperature \& Pressure.............................................................Check, Steady and Within Limits
+\item RPM.............................................................Smoothly Close the Throttle, Check Idle.Temps and
+  \begin{checklist}
+  \item Pressures Steady, Within Limits. Then Reset 1200
+  \end{checklist}
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Pre-Takeoff Checks}
+\begin{numberedchecklist}
+\item Trim............................................................................................................Set for Take-Off
+\item Throttle Friction.............................................................................................Finger Tight
+\item Mixture..........................................................................................................Mixture Rich.
+\item Magnetos..........................................................................Magnetos on Both. Master Switch On
+\item Carb Heat.....................................................................................................................Off
+\item Fuel Selector.................................................................................On Fuller Tank, Check Contents
+\item Fuel Pump.........................................................................................On, Pressure Checked
+\item Flaps............................................................................................................Set (Normal 0°)
+\item Engine Instruments.......................................................Check (Temperatures \& Pressures)
+\item Seat Belts / Seat Backs...............................................................................Secure/Erect
+\item Cabin Doors................................................................................................Locked/Latched
+\item Annunciator Panel.....................................................................................Test/All Lights Out
+\item Flying Controls.........................................................................Full Free Correct Movement
+\item Radio \& Transponder..................................................Confirm Radio/Nav Set. Transponder set, Alt.
+\item Flight Instruments...........................................................Check/Altimeters Set. Pitot Heat as Required
+\item Lights.....................................................................Recognition/Landing Lights and Anit-Cols Lights On
+\item Take-Off Brief................................................Review Speeds, Crosswind, Departure Brief \&
+  \begin{checklist}
+  \item Emergency Procedures
+  \end{checklist}
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Take Off}
+
+\subsubsection*{Normal Take-Off}
+\begin{numberedchecklist}
+\item Lookout....................................................Obtain Clearance, Check Approach Clear Visually
+\item Line up..........................................................On Runway Centreline, Ensure Nosewheel Straight,
+  \begin{checklist}
+  \item D.I. Indicating Runway Heading. Controls Free
+  \end{checklist}
+\item Brakes........................................................................................................Off, Heels on Floor
+\item Throttle...................................................................................Smoothly Open to Full; Check Power
+\item Oil......................................................................Temperature and Pressure Steady and in Green
+\item Airspeed..............................................................................................................Increasing
+\item Elevator Control........................................................................................Lift Nose by 60 Kts
+\item Climb Speed....................................................................................................80 Kts (Clean).
+\end{numberedchecklist}
+
+\subsubsection*{Short Field Take-Off (Hard Surface)}
+\begin{numberedchecklist}
+\item Flaps..............................................................................................................................25°
+\item Brakes.......................................................................Hold (Keep Moving During a Soft Field Take-Off)
+\item Throttle.........................................................Fully Open, Check power, Oil Temp and Pressure
+\item Brakes.....................................................................................................................Release
+\item Elevator Control........................................................................................Slight Back Pressure
+\item Climb Speed.......................................................................80 Kts (Best angle of Climb is 65 Kts)
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{After Take-Off}
+\begin{numberedchecklist}
+\item Lookout........................................................................Point Selected Left of Nose, Check Drift
+\item Flaps..................................................................Retract Above 200’ a.g.l, Not Below 65 Kts
+\item Oil......................................................................Temperature and Pressure Steady, Within Limits
+\item Recognition/Landing Lights..............................................................................................Off
+\item Fuel Pump.............................................................................................Off (Above 1000ft a.g.l)
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Climb}
+
+\subsubsection*{Normal Climb}
+\begin{numberedchecklist}
+\item Airspeed.....................................................................Clean: 80 Kts (Best Rate of Climb)
+\item Throttle.............................................................................................................Fully Open
+\item Mixture...................................................................................................Rich Below 3000’
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{En-Route Climb}
+\begin{numberedchecklist}
+\item Airspeed......................................................................................................................90 Kts
+\item Throttle.............................................................................................................Fully Open
+\item Mixture.............................................................................................................As Required
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{En-Route Checks (FREDA)}
+\begin{numberedchecklist}
+\item \textbf{F}uel..................................................................................................Check Contents/Balanced
+\item \textbf{R}adio / Radio aids.............................................Check Volume; Frequency Change if Required /
+  \begin{checklist}
+  \item Radio Aids Identified
+  \end{checklist}
+\item \textbf{E}ngine........................................................Oil Temperature and Pressure Steady and Within
+  \begin{checklist}
+  \item Limits. Ammeter Charging. Suction Within Limits.
+  \item Check for Carb. Icing. Mixture as Required.
+  \end{checklist}
+\item \textbf{D}irection Indicator................................................................................................Check D.I.
+\item \textbf{A}ltimeter......................................................................................................................Set
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{HASELL Checks (Stalls)}
+\begin{numberedchecklist}
+\item \textbf{H}eight....................................................................Sufficient to Recover by 2000’ AGL
+\item \textbf{A}irframe..........................................................................Flaps as Required. Brakes off
+\item \textbf{S}ecurity....................................................Doors, Windows and Harnesses Secure; No Loose
+  \begin{checklist}
+  \item Articles
+  \end{checklist}
+\item \textbf{E}ngine.....................................................Check Oil Temperature and Pressure, Mixture as
+  \begin{checklist}
+  \item Required, Check Fuel Contents, Fuel Pump On,
+  \item Clear Carb Ice
+  \end{checklist}
+\item \textbf{L}ocation.......................................................Clear of Airfields, Built Up Areas, Controlled
+  \begin{checklist}
+  \item Airspace or Cloud and Danger Areas
+  \end{checklist}
+\item \textbf{L}ookout...............................................................Check No Aircraft Around, Particularly Below
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{HELL (For Continued Exercise)}
+\begin{numberedchecklist}
+\item \textbf{H}eight....................................................................Sufficient to Recover by 2000’ AGL
+\item \textbf{E}ngine.....................................................Check Oil Temperature and Pressure, Mixture as
+  \begin{checklist}
+  \item Required, Check Fuel Contents, Clear Carb Ice
+  \end{checklist}
+\item \textbf{L}ocation.......................................................Clear of Airfields, Built Up Areas, Controlled
+  \begin{checklist}
+  \item Airspace or Cloud and Danger Areas
+  \end{checklist}
+\item \textbf{L}ookout...............................................................Check No Aircraft Around, Particularly Below
+\end{numberedchecklist}
+
+\textit{Note: Reset D.I after completion of the exercise}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Airfield Approach Checks: FFREDA}
+\begin{numberedchecklist}
+\item \textbf{F}uel..............................................................................................Check Quantity/Balanced
+\item \textbf{F}uel Pump......................................................................................................................On
+\item \textbf{R}adio...........................................................Correct Frequency Volume Up. Radio Aids Identified
+\item \textbf{E}ngine.........................................................Temperature and Pressure in Limits, Mixture Rich
+\item \textbf{D}irection Indicator..................................................................................................D.I. Reset
+\item \textbf{A}ltimeters.............................................................................................................Altimeters Set
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Pre-Landing Checks}
+\begin{numberedchecklist}
+\item Brakes...........................................................................................Brakes Off; Pressure Up
+\item Mixture...............................................................................................................Mixture Rich
+\item Carb. Heat...............................................Carb. Heat, Check for Icing and then Return to Cold
+\item Fuel...................................................................................Fuel On, Sufficient for Go Around
+\item Oil......................................................................Oil Temperature and Pressure Within Limits
+\item Hatches and Harnesses.....................................................................Pilot and Passenger Secure
+\item Lights.......................................................................................Recognition/Landing Lights On
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Approach and Landing}
+
+\subsubsection*{Normal Landing}
+\begin{numberedchecklist}
+\item Carb. Heat..............................................................Apply Full Heat Before Closing Throttle
+\item Flaps..........................................................................Select 25\textdegree{} When Speed is Below VFE
+\item Airspeed...................................................Initially 70 Kts. Final Approach, 63 Kts, Flap 40\textdegree{}
+\item Touchdown...........................................................Mainwheels First, Lower Nose Wheel Gently
+\item Braking............................................................................................................Minimum Required
+\end{numberedchecklist}
+
+\subsubsection*{Flapless Landing}
+\begin{numberedchecklist}
+\item Airspeed.....................................................................................................................75 Kts
+\end{numberedchecklist}
+
+\subsubsection*{Shortfield Landing}
+\begin{numberedchecklist}
+\item Flaps...............................................................................................................................40\textdegree{}
+\item Airspeed.......................................................................................................................65 Kts
+\item Touchdown.....................................................................................Main Wheels, Lower the Nose
+\item Brakes................................................................................................................Apply Positively
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Glide Approaches}
+\begin{checklist}
+\item Airspeed.....................................................................................................................75 Kts
+\item Flap..................................................................................................................As Required
+\end{checklist}
+
+\textbf{Notes:}
+\begin{numberedchecklist}
+\item During prolonged glides; the engine should be warmed every 500’.
+\item The approach speeds are for calm conditions, in gusty or turbulent conditions the figures should be increased.
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Go-Around (Missed Approach)}
+\begin{numberedchecklist}
+\item Throttle...............................................................................................................Full Power
+\item Carb. Heat..................................................................................................................Cold
+\item Airspeed.......................................................65 Kts Until Clear of Obstacles, then 80 Kts
+\item Flaps.........................................................If 30\textdegree{}, Retract to 25\textdegree{} as Soon as Possible. Retract
+  \begin{checklist}
+  \item Remaining 25\textdegree{} Above 200’
+  \end{checklist}
+\item Radio...............................................................................................................Inform ATC
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{After Landing}
+\textit{Clear the runway and stop the aircraft}
+\begin{numberedchecklist}
+\item Carb Heat...................................................................................................................Cold
+\item Flaps...............................................................................................................................Up
+\item Fuel Pump....................................................................................................................Off
+\item Pitot heat......................................................................................................................Off
+\item Strobe Lights / Landing Lights...........................................................................Off / As Required
+\item Trimmers............................................................................................................Set Neutral
+\item Transponder...............................................................................................................Standby
+\item Non-essential Electrics...................................................................................................Off
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Shut Down}
+\begin{numberedchecklist}
+\item Park............................................................................................Into Wind, Nosewheel Straight
+\item Parking brake..................................................................................................................On
+\item Engine............................................................1200 RPM for 30 secs; Check Oil Temperature and
+  \begin{checklist}
+  \item Pressure
+  \end{checklist}
+\item Magnetos...................................................................................................................Check
+\item Avionics/Radio Master Switch...........................................................................................Off
+\item Mixture..................................................................................................................Full Lean
+\item Throttle...................................................................................................................Closed
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{After Engine Stop}
+\begin{numberedchecklist}
+\item Magnetos..................................................................................................Off, Key Out
+\item Exterior Lights.......................................................................................................All Off
+\item Fuel Selector.............................................................................................................Off
+\item Interior Lights..........................................................................................................Off
+\item Battery \& Alternator Masters......................................................................................Off
+\item Harnesses..............................................................................................................Tidy
+\item External.........................................................Pitot Cover On. Lock up and tie down. Use Chocks
+  \begin{checklist}
+  \item if necessary
+  \end{checklist}
+\end{numberedchecklist}
+\textit{End of Normal Checklist}
+
+\rule{\linewidth}{0.4pt}
+
+\section*{Emergencies}
+
+\subsection*{Engine Failure After Takeoff}
+\textit{If the engine fails after take-off you should (as soon as you notice the loss of power):}
+\begin{numberedchecklist}
+\item Lower the Nose and Maintain the Aircraft’s Gliding Speed
+\item Close the Throttle
+\item Select the Most Suitable Landing Area, Compatible With Obstructions and Wind
+  \begin{checklist}
+  \item Direction; Preferably Straight Ahead or Within 30\textdegree{} Either Side
+  \end{checklist}
+\item Maintain Speed and Use Flap as Necessary
+\item If Time Permits: - Mixture to I.C.O., Fuel Off, Fuel Pump Off, Magnetos Off, Door
+  \begin{checklist}
+  \item Unlocked and Harnesses Tight, Mayday Call, Master Switch Off
+  \end{checklist}
+\item After Touchdown Leave the Aircraft as Quickly as Possible
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Crash Drill}
+\begin{numberedchecklist}
+\item Mixture I.C.O, Fuel Pump Off
+\item Fuel Selector Off
+\item Magnetos Off
+\item Brakes Off
+\item Harnesses Very Tight
+\item Hatches Unlatched
+\item Master Switch Off (After Electrical Services are No Longer Required)
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Engine Fire During Start}
+\begin{numberedchecklist}
+\item Starter - Crank Engine
+\item Mixture - Idle Cut Off
+\item Throttle - Open
+\item Electric Fuel Pump - Off
+\item Fuel Selector - Off
+\item Abandon Aircraft if Fire Continues
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Engine Fire In The Air}
+\begin{numberedchecklist}
+\item Fuel Selector - Off
+\item Throttle - Closed
+\item Mixture - Idle Cut-Off
+\item Electric Fuel Pump - Check Off
+\item Heater and Defroster - Off
+\item Proceed with Power Off Landing Procedure
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Electrical Fire In The Air}
+\begin{numberedchecklist}
+\item Master Switch Off, Alternator Off
+\item Vents - Open
+\item Cabin Heat - Off
+\item Land as soon as Practicable.
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Cabin Fire In The Air}
+\begin{numberedchecklist}
+\item Master Switch Off
+\item Vents, Cabin Air/Heat Closed
+\item Use Fire Extinguisher and Then Ventilate The Cabin
+\item Land as Soon as Possible.
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Forced Landing Without Power}
+\begin{numberedchecklist}
+\item Adopt Glide and Trim for Correct Gliding Speed
+\item Check Wind Direction
+\item Select Landing Area and 1000' Area
+\item Plan Circuit
+\item Complete Failure Checks:
+  \begin{checklist}
+  \item Switch Tanks
+  \item Electric Fuel Pump On
+  \item Mixture Rich
+  \item Carb. Heat Change Position
+  \item Magnetos on Both
+  \item Primer Locked
+  \end{checklist}
+\item Mayday Call on Radio
+\item Complete Crash Drill
+\item Use Full Flap for the Touchdown if Possible
+\item Apply Heavy Braking
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Forced Landing With Power}
+\begin{numberedchecklist}
+\item Assess the Time Available and Check Fuel State, Hours of Daylight and Rate of
+  \begin{checklist}
+  \item Weather Deterioration
+  \end{checklist}
+\item Check Wind Direction
+\item Select Suitable Landing Area
+\item Carry Out an Inspection Run at Slow Safe Cruising Speed; Initially at 500' to Check
+  \begin{checklist}
+  \item for Obstructions and Secondly at 100' Over the Landing Area to Reassess the
+  \item Approach Path, Landing Surface and Overshoot Area (if time permits)
+  \end{checklist}
+\item Set up For a Short or Soft Field Landing (as appropriate)
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Ditching}
+\begin{numberedchecklist}
+\item Set up Minimum Rate of Descent (75 Kts)
+\item Mayday Call
+\item Secure or Jettison Heavy Objects
+\item With High Winds and Heavy Seas: Approach Into Wind.
+  \begin{checklist}
+  \item With Light Winds and Heavy Swells: Approach Parallel to Swells.
+  \end{checklist}
+\item Unlatch the Door
+\item Touchdown in a Level Attitude
+\item Evacuate Through the Cabin Door; if Necessary Open Window to Equalise Pressure
+\end{numberedchecklist}
+
+\textbf{Notes:}
+\begin{numberedchecklist}
+\item Ideally, land ahead and either side of a small ship.
+\item Do not inflate life jackets in the cockpit.
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Low-Voltage/Electrical Failure}
+\begin{numberedchecklist}
+\item Check Ammeter, if Reading Zero, Alternator Off
+\item Reset Circuit Breaker
+\item Alternator On
+\item Reduce Electrical Load
+\end{numberedchecklist}
+
+\textbf{Notes:}
+\begin{numberedchecklist}
+\item If total electrical failure occurs, keep an extra good lookout. Land when safe to do so,
+  \begin{checklist}
+  \item clear the runway as quickly as possible and phone ATC at once.
+  \end{checklist}
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Radio Failure}
+\begin{numberedchecklist}
+\item Check Correct Frequency
+\item Check Squelch Setting (if applicable)
+\item Check Volume
+\item Check Microphone Plug Secure
+\item Check Circuit Breaker
+\item Try to Communicate Using the Other PTT Switch
+\end{numberedchecklist}
+
+\textbf{Notes:}
+\begin{numberedchecklist}
+\item If the radio is unserviceable: flash the landing light on approach and land on visual
+  \begin{checklist}
+  \item signals.
+  \end{checklist}
+\item If flying outside of the circuit, follow lost comm procedure from AIP.
+\end{numberedchecklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Uncertain of Position / Lost Procedure}
+
+\subsubsection*{Uncertain of Position}
+Inform ATC immediately on the frequency you are in communication with.
+Check flight plan, log, compass and heading for gross errors; calculate DR position; from
+flight time decide radius of circle of uncertainty; mark on map using DR position as Centre;
+estimate new heading from DR position to regain destination or track. Utilise Nav aids
+including moving map if available.
+
+\subsubsection*{Lost Procedure}
+\begin{enumerate}[label=\alph*)]
+\item Radio Available
+  \begin{checklist}
+  \item Check frequency selection; declare that you are lost; make maximum use of aids
+  \item available; consider increasing height to improve range (taking account of controlled
+  \item airspace). R/T procedure: urgency or distress call to obtain fix. You are no longer lost.
+  \item Follow the ATC instructions in full.
+  \end{checklist}
+\item Radio Not Available
+  \begin{enumerate}[label=\roman*.]
+  \item Check remaining fuel and calculate endurance; consider daylight remaining, weather
+    \begin{checklist}
+    \item tendency, nature of terrain in relation to probable position, minimum safe altitude; recheck flight log for errors; switch transponder, if available, to emergency code.
+    \end{checklist}
+  \item Map reading from ground to map and try to identify the likely area from the nature of
+    \begin{checklist}
+    \item the terrain before checking other features. Look for prominent features in the distance
+    \item as well as nearby; adhere to a calculated heading and keep map properly orientated.
+    \end{checklist}
+  \item Decide on a positive course of action; relative merits of square search, flight towards
+    \begin{checklist}
+    \item prominent or line feature outside of circle of uncertainty; consider precautionary
+    \item landing (see Ex 17) if you are short of fuel or are unable to continue the flight.
+    \end{checklist}
+  \end{enumerate}
+\end{enumerate}
+
+\textit{End of Emergency Checklist}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Altimeter Setting Procedures}
+\begin{longtable}{|p{4cm}|p{4cm}|p{4cm}|}
+\hline
+\textbf{No. 1} & \textbf{No. 2} & \textbf{Description} \\
+\hline
+\endhead
+\hline
+\multicolumn{3}{|r|}{{Continued on next page}} \\
+\hline
+\endfoot
+\hline
+\endlastfoot
+Pre-flight & Check +50 ft / -75 ft of datum, 50 ft of each other & \\
+Airport QFE & Airport QFE & \\
+Airport QNH & Airport QNH & \\
+Departure & For take-off & Airport / zone QNH \\
+            & Cleared to a FL. & Airport / zone QNH \\
+            & Airport QNH & 1013 \\
+Cruise      & Above Transition Alt & Regional QNH \\
+            & At / below Transition Alt & Regional QNH \\
+            & 1013 & Regional QNH \\
+Note        & In or below TMA use TMA QNH not regional QNH & \\
+Descent     & Cleared to FL & Zone / regional QNH \\
+            & Cleared to Altitude & Zone / regional QNH \\
+            & 1013 & Zone / airport QNH \\
+Final Approach / Circuits & Airport QNH / QFE & Airport QNH \\
+Missed Approach & Airport QNH & Airport QNH \\
+Note        & Airport QNH is valid within 25m of airport & \\
+\end{longtable}
+
+\rule{\linewidth}{0.4pt}
+
+\subsection*{Recommended Operating Speeds / Limitations}
+\begin{longtable}{|p{3cm}|p{1.5cm}|p{1.5cm}|p{6cm}|}
+\hline
+\textbf{Category} & \textbf{Archer 181} & \textbf{Warrior 161} & \textbf{Notes} \\
+\hline
+\endhead
+\hline
+\multicolumn{4}{|r|}{{Continued on next page}} \\
+\hline
+\endfoot
+\hline
+\endlastfoot
+\textbf{Take-Off} & & & \\
+Rotate (depending on weight) & 60 & 60 & Reduced by 5 kts for soft fields \\
+\textbf{Climb} & & & \\
+0\textdegree{} Flap / Best Rate & 79 & 79 & \\
+0\textdegree{} Flap / Best Angle & 65 & 63 & \\
+Cruise Climb & 90 & 90 & \\
+Minimum speed of 60 kts for flap retraction & & & \\
+\textbf{Cruise} & & & \\
+Normal / 2200 RPM & 100 & 90 & \\
+Bad Vis. 20\textdegree{} Flap / 2000 RPM & 70 & 70 & \\
+\textbf{Approach} & & & \\
+Normal (25\textdegree{} Flap) & 70 & 70 & 1. For max performance approach speed is 63 kts \\
+Glide & 75 & 75 & 2. Add 5kts to take-off speeds and VAT in strong winds / turbulence, reducing flap settings as necessary \\
+Flapless & 75 & 75 & \\
+Performance / Short-field (40\textdegree{} Flap) & 65 & 65 & \\
+\textbf{Max Airspeeds} & & & \\
+VFE (White Arc) & 102 & 103 & \\
+VNO (Green Arc) & 125 & 126 & \\
+VNE (Red Line) & 154 & 160 & \\
+VA (Manoeuvring Speed @ MAUW) & 113 & 111 & \\
+Max X-Wind & 17 & 17 & \\
+Crosswind Angle & 10\textdegree{} & 20\textdegree{} & 30\textdegree{} / 40\textdegree{} / 50\textdegree{} / 60\textdegree{} / 70\textdegree{} / 80\textdegree{} / 90\textdegree{} \\
+Crosswind Factor & 0.2 & 0.3 & 0.5 / 0.6 / 0.7 / 0.8 / 0.9 / 0.9 / 1.0 \\
+\end{longtable}
+
+\end{document}
