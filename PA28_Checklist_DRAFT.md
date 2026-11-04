@@ -1,3 +1,5 @@
+> **UNOFFICIAL – FOR REFERENCE ONLY.** Not an approved checklist. The aircraft POH/AFM and operator procedures are authoritative.
+
 # Redhill & Shoreham Aviation - Piper PA28 Checklist
 
 Name: ___________________________
