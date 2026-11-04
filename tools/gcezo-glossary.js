@@ -49,6 +49,7 @@ const GLOSSARY = {
   'AD': 'aerodrome (AIP Part 3 section)',
   'NATS': 'the UK air navigation service provider',
   'CAA': 'UK Civil Aviation Authority',
+  'ANO': 'Air Navigation Order 2016 (UK law; defines night as from 30 min after sunset to 30 min before sunrise)',
   'SERA': 'Standardised European Rules of the Air (as retained in UK law)',
   'Part-NCO': 'UK air operations rules for non-commercial flights in non-complex aircraft',
   'SS05': 'CAA Safety Sense Leaflet 05 "Flight under VFR" (Oct 2022)',

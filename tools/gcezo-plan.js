@@ -53,6 +53,7 @@ const PLAN_GROUPS = [
     ['Altimeter settings planned (most relevant QNH; RPS only if nothing better); set before any altitude-limited entry point', 'SS05 / INF'],
     ['ATSOCAS / LARS units and frequencies noted; Basic vs Traffic Service understood', 'SS05'],
     ['Frequency Monitoring Code (listening squawk) noted where near controlled airspace', 'INF'],
+    ['Daylight checked: sunrise/sunset at departure, destination and alternate; whole flight, including any diversion and reserve, completed before night (UK: night begins 30 min after sunset) unless night-qualified and planned as a night flight', 'ANO / Practice'],
   ]},
   { title: 'Aerodromes', step: 4, items: [
     ['Prior permission (PPR) obtained for the destination', 'SS05'],
