@@ -103,26 +103,4 @@ const FREDA = [
   ['Altimeter', 'are you still at the correct altitude and using the most appropriate QNH?'],
 ];
 
-// Sunrise / sunset (UTC) - standard almanac algorithm, official zenith 90.833 deg. Accuracy ~1-2 min.
-// date: 'YYYY-MM-DD'; lat +N; lon +E. Returns minutes after 00:00 UTC, or null (no rise/set).
-function sunEvent(dateStr, lat, lon, rising) {
-  const [Y, Mo, D] = dateStr.split('-').map(Number);
-  const r = Math.PI / 180;
-  const N = Math.floor(275 * Mo / 9) - Math.floor((Mo + 9) / 12) * (1 + Math.floor((Y - 4 * Math.floor(Y / 4) + 2) / 3)) + D - 30;
-  const lngHour = lon / 15;
-  const t = N + ((rising ? 6 : 18) - lngHour) / 24;
-  const M = 0.9856 * t - 3.289;
-  let L = M + 1.916 * Math.sin(M * r) + 0.020 * Math.sin(2 * M * r) + 282.634; L = ((L % 360) + 360) % 360;
-  let RA = Math.atan(0.91764 * Math.tan(L * r)) / r; RA = ((RA % 360) + 360) % 360;
-  RA = (RA + Math.floor(L / 90) * 90 - Math.floor(RA / 90) * 90) / 15;
-  const sinDec = 0.39782 * Math.sin(L * r), cosDec = Math.cos(Math.asin(sinDec));
-  const cosH = (Math.cos(90.833 * r) - sinDec * Math.sin(lat * r)) / (cosDec * Math.cos(lat * r));
-  if (cosH > 1 || cosH < -1) return null;
-  const H = (rising ? 360 - Math.acos(cosH) / r : Math.acos(cosH) / r) / 15;
-  const T = H + RA - 0.06571 * t - 6.622;
-  const UT = (((T - lngHour) % 24) + 24) % 24;
-  return UT * 60;
-}
-function hhmm(min) { min = ((Math.round(min) % 1440) + 1440) % 1440; return String(Math.floor(min / 60)).padStart(2, '0') + ':' + String(min % 60).padStart(2, '0'); }
-
-if (typeof module !== 'undefined') module.exports = { PLAN_GROUPS, PLAN_STEPS, NCO_RESERVE, sunEvent, hhmm };
+if (typeof module !== 'undefined') module.exports = { PLAN_GROUPS, PLAN_STEPS, NCO_RESERVE };

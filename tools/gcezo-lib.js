@@ -65,7 +65,7 @@ const GCEZO_DEFAULTS = {
   pa: { ftPerHpa: 30, noHighQnhCredit: true },
 
   // Planning defaults (pilot / operator policy, not POH)
-  plan: { reservePct: 0, reserveMin: 45, contingencyPct: 10, mixture: 'bestPower', power: 75, tas: 90, flightType: 'day', sunsetMarginMin: 0 },
+  plan: { reservePct: 0, reserveMin: 45, contingencyPct: 10, mixture: 'bestPower', power: 75, tas: 90, flightType: 'day' },
 };
 
 // Settings page registry: AIRCRAFT data only (things that change only when the aircraft changes).

@@ -9,19 +9,6 @@
 <section class="card" id="summary"></section>
 
 <section class="card" style="margin-top:16px">
-  <h2>Flight</h2>
-  <div class="kv2">
-  <label class="f">Date <input id="date" type="date"></label>
-  <label class="f">Pilot <input id="pilot" type="text"></label>
-  <label class="f">Departure <input id="dep" type="text"></label>
-  <label class="f">Destination <input id="dest" type="text"></label>
-  <label class="f">ETD (UTC) <input id="etd" type="time"></label>
-  <label class="f">Category <select id="cat"><option value="normal">Normal</option><option value="utility">Utility</option></select></label>
-  <label class="f">Flight type <small>Part-NCO reserve</small><select id="ftype"><option value="day">Day</option><option value="dayLocal">Day, local (in sight of aerodrome)</option><option value="night">Night</option></select></label>
-  </div>
-</section>
-
-<section class="card" style="margin-top:16px">
   <h2><span class="step">1</span>Pilot</h2>
   <div id="pl_step1"></div>
 </section>
@@ -48,13 +35,6 @@
   </div>
   <div class="row" style="margin-top:6px"><label class="row"><input type="checkbox" id="nav_perleg" data-nav="perLeg"> Per-leg wind</label> <a href="nav-legs.html">Edit legs, altitudes, frequencies and per-leg winds on the Nav legs page &rarr;</a></div>
   <div style="overflow-x:auto;margin-top:8px" id="navlog"></div>
-  <h3 class="stephead">Daylight</h3>
-  <div class="kv2">
-    <label class="f">Destination lat &deg;N <input id="dlat" type="number" step="0.0001" placeholder="51.2136"></label>
-    <label class="f">Destination lon &deg;E <small>W is negative</small><input id="dlon" type="number" step="0.0001" placeholder="-0.1386"></label>
-    <label class="f">Land at least N min before sunset <input id="sunmargin" type="number" min="0" step="5"></label>
-  </div>
-  <div id="sun" class="note"></div>
   <div id="pl_step4"></div>
 </section>
 
@@ -65,6 +45,7 @@
     <label class="f">Power % <select id="pwr"><option>75</option><option>65</option><option>55</option></select></label>
     <label class="f">Climb fuel USG <small>Fig 5-19</small><input id="climb" type="number" value="1.4" step="0.1"></label>
     <label class="f">Climb time min <small>Fig 5-19</small><input id="climbt" type="number" value="8.5" step="0.5"></label>
+    <label class="f">Flight type <small>Part-NCO reserve</small><select id="ftype"><option value="day">Day</option><option value="dayLocal">Day, local (in sight of aerodrome)</option><option value="night">Night</option></select></label>
     <label class="f">Contingency % <input id="cont" type="number"></label>
     <label class="f">Final reserve min <input id="res" type="number"></label>
     <label class="f">Alternate min <input id="alt" type="number" value="0"></label>
@@ -77,6 +58,7 @@
   <h2><span class="step">6</span>Weight &amp; balance</h2>
   <div class="grid">
     <div>
+      <label class="f">Category <select id="cat"><option value="normal">Normal</option><option value="utility">Utility</option></select></label>
       <label class="f">Pilot kg <input id="p1" type="number" value="80"></label>
       <label class="f">Front passenger kg <input id="p2" type="number" value="0"></label>
       <label class="f">Rear passenger(s) kg <input id="p3" type="number" value="0"></label>
@@ -162,10 +144,8 @@ document.querySelectorAll('[data-nav]').forEach(e=>{
 // defaults (conservative) then restore this browser's saved inputs
 setDefault('ftype',GCEZO.plan.flightType); setDefault('mix',GCEZO.plan.mixture); setDefault('pwr',String(GCEZO.plan.power));
 setDefault('cont',GCEZO.plan.contingencyPct); setDefault('res',GCEZO.plan.reserveMin); setDefault('fob',GCEZO.fuel.usableUSG);
-setDefault('sunmargin',GCEZO.plan.sunsetMarginMin);
 const ids=[...document.querySelectorAll('main input:not([data-nav]),main select:not([data-nav])')].map(e=>e.id).filter(i=>i&&!i.startsWith('as_'));
 const save=persist('gcezo-pre-v3',ids);
-if(!$('date').value) $('date').value=new Date().toISOString().slice(0,10);
 
 function calc(){
   const checks=[]; // [ok(true/false/null), text, step]
@@ -181,19 +161,6 @@ function calc(){
   { const [d,n]=ticked(4); add(4,d===n?true:null,`${d}/${n} route &amp; aerodrome items ticked`); }
   const gph=GCEZO.fuelFlowGPH[$('mix').value][$('pwr').value];
   $('navlog').innerHTML=navLogHTML(nc,gph,'USG');
-  { const lat=parseFloat($('dlat').value), lon=parseFloat($('dlon').value), etd=$('etd').value, mg=num('sunmargin');
-    if(isFinite(lat)&&isFinite(lon)&&$('date').value){
-      const ss=sunEvent($('date').value,lat,lon,false), sr=sunEvent($('date').value,lat,lon,true);
-      let txt=ss==null?'No sunset/sunrise at this latitude/date':`Destination sunrise ${hhmm(sr)} UTC, sunset ${hhmm(ss)} UTC; night (UK: 30 min after sunset) from ${hhmm(ss+30)} UTC.`;
-      if(etd&&ss!=null){
-        const [h,m]=etd.split(':').map(Number), eta=h*60+m+num('climbt')+cruiseMin, lim=ss-mg;
-        txt+=` ETA ${hhmm(eta)} UTC = ETD + climb ${fx(num('climbt'),1)} + en route ${fx(cruiseMin,1)} min.`;
-        if($('ftype').value!=='night') add(4,eta<=lim,`Daylight: ETA ${hhmm(eta)} UTC vs latest ${hhmm(lim)} UTC (sunset${mg?` &minus; ${mg} min`:''})`);
-        if($('ftype').value!=='night'&&h*60+m<sr) add(4,false,`Daylight: ETD ${etd} UTC is before sunrise ${hhmm(sr)} UTC`);
-      } else add(4,null,'Daylight: enter ETD (UTC) to check arrival against sunset');
-      $('sun').textContent=txt;
-    } else { $('sun').textContent='Enter destination latitude/longitude for sunrise/sunset (standard almanac algorithm, zenith 90.833°, ~1-2 min accuracy).'; add(4,null,'Daylight: enter destination position to check sunset'); }
-  }
   // 5 fuel
   const taxi=-GCEZO.taxiAllowance.weight/GCEZO.fuel.lbPerUSG, climb=num('climb'), cruise=gph*cruiseMin/60;
   const trip=climb+cruise, cont=trip*num('cont')/100, alt=gph*num('alt')/60, res=gph*num('res')/60, req=taxi+trip+cont+alt+res, fob=num('fob');
@@ -243,7 +210,7 @@ function calc(){
   $('maths').innerHTML=maths;
   // summary, in planning order
   const allOk=checks.every(c=>c[0]!==false);
-  let h=`<h2>${esc($('dep').value||'DEP')} &rarr; ${esc($('dest').value||'DEST')} &middot; ${$('date').value} ${$('pilot').value?'&middot; '+esc($('pilot').value):''}</h2>
+  let h=`<h2>Pre-flight summary</h2>
    <div style="margin-bottom:6px">${pill(allOk,'No limits exceeded (still verify against the POH)','Check items below')}</div>`;
   for(let st=1;st<=8;st++){
     const cs=checks.filter(c=>c[2]===st); if(!cs.length) continue;
