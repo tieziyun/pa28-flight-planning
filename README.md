@@ -9,7 +9,7 @@
 > responsibility or liability for any loss, damage, injury or death arising from its use or from reliance on it.
 > Nothing here excludes liability that cannot lawfully be excluded.
 
-**Web tools:** <https://tieziyun.github.io/pa28-checklist/> (opens `tools/preflight.html`). They run entirely in the browser and work offline; inputs are stored only in your own browser.
+**Web tools:** <https://tieziyun.github.io/pa28-flight-planning/> (opens `tools/preflight.html`). They run entirely in the browser and work offline; inputs are stored only in your own browser.
 
 ## Web tools (`tools/`)
 

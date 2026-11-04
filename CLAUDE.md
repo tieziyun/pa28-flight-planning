@@ -25,4 +25,4 @@ This project contains aircraft checklists for the PA-28, along with related tool
 
 ## Repository
 
-- The repo is public and published with GitHub Pages (https://tieziyun.github.io/pa28-checklist/). Never commit `G-CEZO POH.pdf` (131 MB, over GitHub's limit; Piper copyright) — it is in .gitignore.
+- The repo is public and published with GitHub Pages (https://tieziyun.github.io/pa28-flight-planning/). Never commit `G-CEZO POH.pdf` (131 MB, over GitHub's limit; Piper copyright) — it is in .gitignore.
