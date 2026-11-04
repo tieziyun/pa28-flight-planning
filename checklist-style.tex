@@ -1,0 +1,47 @@
+% Shared LaTeX style for the G-CEZO checklists (formatting only, no checklist content).
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage[a5paper,margin=10mm,top=14mm,bottom=14mm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{zref-totpages}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{needspace}
+\usepackage{multicol}
+\usepackage{textcomp}
+
+\definecolor{emerg}{RGB}{170,0,0}
+\definecolor{normal}{RGB}{0,70,140}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small G-CEZO \textbullet\ PA-28-161 Cadet}
+\fancyhead[R]{\small\nouppercase{\leftmark}}
+\fancyfoot[C]{\small Page \thepage\ of \ztotpages}
+\fancyfoot[R]{\scriptsize Source: POH VB-1360}
+\fancyfoot[L]{\scriptsize\bfseries\color{red}UNOFFICIAL \textendash\ FOR REFERENCE ONLY}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+
+\titleformat{\section}{\Large\bfseries}{}{0pt}{}[\titlerule]
+\titleformat{\subsection}{\normalsize\bfseries}{}{0pt}{}
+\titleformat{\subsubsection}{\small\bfseries\itshape}{}{0pt}{}
+\titlespacing*{\subsection}{0pt}{8pt}{3pt}
+\titlespacing*{\subsubsection}{0pt}{5pt}{2pt}
+
+% \chk{Item}{ACTION} -- item ............ ACTION
+\newcommand{\chk}[2]{\par{\noindent\parfillskip=0pt\hangindent=2em #1\ \dotfill\ #2\par}}
+% Plain line (instruction text, no action column)
+\newcommand{\txt}[1]{\par\noindent #1\par}
+% Condition / lead-in line
+\newcommand{\cond}[1]{\par\vspace{3pt}\noindent #1\par}
+% Boxed NOTE / CAUTION / WARNING exactly as printed
+\newcommand{\pohnote}[2]{\par\vspace{3pt}\begin{center}\begin{minipage}{0.82\linewidth}\centering\textbf{#1}\\[1pt]\small\raggedright #2\end{minipage}\end{center}\vspace{2pt}}
+
+\newenvironment{proc}[1]{\needspace{6\baselineskip}\subsection*{#1}\begin{list}{}{\leftmargin=1em\rightmargin=0pt\itemsep=0pt\parsep=0pt\topsep=0pt}\item\relax}{\end{list}}
+
