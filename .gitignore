@@ -1,0 +1,11 @@
+# LaTeX build files
+*.aux
+*.log
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Scanned POH: 131 MB (over GitHub's 100 MB file limit) and Piper copyright - kept locally only
+G-CEZO POH.pdf
