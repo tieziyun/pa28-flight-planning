@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en-GB"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>G-CEZO Nav Legs</title>
+<link rel="stylesheet" href="gcezo.css">
+<script src="gcezo-charts.js"></script><script src="gcezo-lib.js"></script><script src="gcezo-math.js"></script><script src="gcezo-ui.js"></script><script src="gcezo-glossary.js"></script>
+</head><body>
+<main>
+<section class="card">
+  <h2>Aircraft and wind</h2>
+  <div class="navgrid">
+    <div><label for="tas">TAS (kt)</label><input id="tas" type="number" inputmode="decimal" min="30" max="300"></div>
+    <div><label for="wd">Wind from (°T)</label><input id="wd" type="number" inputmode="numeric" min="0" max="360"></div>
+    <div><label for="ws">Wind speed (kt)</label><input id="ws" type="number" inputmode="decimal" min="0" max="150"></div>
+    <div><label for="var">Variation (°)</label>
+      <div class="varrow"><input id="var" type="number" inputmode="decimal" min="0" max="30" step="0.5">
+        <select id="varew" aria-label="Variation east or west"><option value="W">W</option><option value="E">E</option></select></div></div>
+    <div><label for="fuel">Fuel burn per hour</label>
+      <div class="varrow"><input id="fuel" type="number" inputmode="decimal" min="0" max="500">
+        <select id="fuelu" aria-label="Fuel unit"><option value="usg">USG</option><option value="l">L</option></select></div></div>
+  </div>
+  <label class="row" style="margin-top:10px"><input type="checkbox" id="perleg"> Per-leg wind (enter W/V on each leg; blank = main wind above)</label>
+  <p class="note">Magnetic = True + West variation, − East variation. Fuel burn blank = POH <span id="pohflow"></span>
+  (conservative default: best power 75%; type your own figure to override). The same legs, TAS, wind and variation are used by the Pre-flight planning page.</p>
+</section>
+
+<section class="card" style="margin-top:16px">
+  <h2>Legs</h2>
+  <div id="legs"></div>
+  <div class="row">
+    <button id="add" type="button">Add leg</button>
+    <button id="print" type="button">Print log</button>
+    <button id="reset" type="button">Clear all legs</button>
+  </div>
+</section>
+
+<section class="card" style="margin-top:16px">
+  <h2>Flight log</h2>
+  <div style="overflow-x:auto" id="log"></div>
+</section>
+
+<section class="card" style="margin-top:16px">
+  <h2>How it works</h2>
+  <details><summary>Show the maths</summary>
+    <p class="note">A = wind direction − track. WCA = arcsin[(wind ÷ TAS) × sin A]. True heading = track + WCA. Groundspeed = TAS × cos WCA − wind × cos A. Time = distance ÷ groundspeed × 60.</p>
+    <p class="note">Check: wind from the right of track turns the nose right (heading goes up); wind from the left turns it left. A straight headwind gives zero correction and GS = TAS − wind.</p>
+  </details>
+  <p class="note">PLOG contents per CAA Safety Sense 05: timings and headings for each leg, radio frequencies, planned altitudes, safety altitudes, fuel plan.
+  MEF on VFR charts is the highest terrain/obstruction in the area with no margin &mdash; it is not a minimum safe altitude. Sense-check headings (e.g. 030&deg; vs 300&deg;).</p>
+  <p class="note">Training aid only. Cross-check with your CRP-5 and PLOG, and use the forecast wind for your planned altitude.</p>
+</section>
+<section class="card" style="margin-top:16px"><h2>Show the maths</h2><details class="maths" open><summary>Equations with the numbers above</summary><div id="maths"></div></details></section>
+</main>
+<script>
+navBar('nav-legs.html');
+const st=navLoad();
+const rad=Math.PI/180, n=(v,d)=>{const x=parseFloat(v);return isFinite(x)?x:d;};
+const pohGPH=()=>GCEZO.fuelFlowGPH[GCEZO.plan.mixture][GCEZO.plan.power];
+function fuelRate(){
+  if(st.fuel!=='') return n(st.fuel,0);
+  return st.fuelUnit==='l'?pohGPH()*GCEZO.conv.usgToL:pohGPH();
+}
+function showPohFlow(){
+  const g=pohGPH();
+  $('pohflow').textContent=`${g.toFixed(1)} USG/h (${(g*GCEZO.conv.usgToL).toFixed(1)} L/h, ${GCEZO.plan.mixture==='bestPower'?'best power':'best economy'} ${GCEZO.plan.power}%)`;
+  $('fuel').placeholder=st.fuelUnit==='l'?(g*GCEZO.conv.usgToL).toFixed(1):g.toFixed(1);
+}
+
+let legUI=[];
+function field(labelText,type,value,onInput,cls,attrs){
+  const wrap=document.createElement('div'); if(cls) wrap.className=cls;
+  const id='f'+Math.random().toString(36).slice(2,9);
+  const lab=document.createElement('label'); lab.htmlFor=id; lab.textContent=labelText;
+  const inp=document.createElement('input'); inp.id=id; inp.type=type; inp.value=value;
+  for(const k in attrs) inp.setAttribute(k,attrs[k]);
+  inp.addEventListener('input',()=>{onInput(inp.value);update();});
+  wrap.appendChild(lab); wrap.appendChild(inp); return wrap;
+}
+function stat(cls,label){
+  const d=document.createElement('div'); d.className='n '+(cls||'');
+  const b=document.createElement('b'), s=document.createElement('span'); s.textContent=label;
+  d.appendChild(b); d.appendChild(s); return {el:d,b};
+}
+function renderLegs(){
+  const legsEl=$('legs'); legsEl.textContent=''; legUI=[];
+  st.legs.forEach((leg,i)=>{
+    const box=document.createElement('div'); box.className='leg';
+    const head=document.createElement('div'); head.className='leghead';
+    const num_=document.createElement('span'); num_.className='legnum'; num_.textContent='Leg '+(i+1);
+    const del=document.createElement('button'); del.type='button'; del.textContent='Remove'; del.setAttribute('aria-label','Remove leg '+(i+1));
+    del.addEventListener('click',()=>{st.legs.splice(i,1);renderLegs();update();});
+    head.appendChild(num_); head.appendChild(del);
+    const ins=document.createElement('div'); ins.className='leginputs';
+    ins.appendChild(field('From → to','text',leg.name,v=>{leg.name=v.slice(0,40);},'name',{maxlength:'40',autocomplete:'off'}));
+    ins.appendChild(field('Track (°T)','number',leg.tc,v=>{leg.tc=n(v,'');},'',{inputmode:'numeric',min:'0',max:'360'}));
+    ins.appendChild(field('Distance (nm)','number',leg.d,v=>{leg.d=n(v,'');},'',{inputmode:'decimal',min:'0',step:'0.1'}));
+    ins.appendChild(field('Planned alt (ft)','number',leg.alt??'',v=>{leg.alt=n(v,'');},'',{inputmode:'numeric',min:'0',step:'100'}));
+    ins.appendChild(field('Safety alt (ft)','number',leg.msa??'',v=>{leg.msa=n(v,'');},'',{inputmode:'numeric',min:'0',step:'100'}));
+    ins.appendChild(field('Frequency','text',leg.freq??'',v=>{leg.freq=v.slice(0,30);},'',{maxlength:'30',autocomplete:'off',placeholder:'e.g. LARS 128.705'}));
+    if(st.perLeg){
+      ins.appendChild(field('Leg wind from (°T)','number',leg.wd??'',v=>{leg.wd=n(v,'');},'',{inputmode:'numeric',min:'0',max:'360',placeholder:String(st.wd)}));
+      ins.appendChild(field('Leg wind (kt)','number',leg.ws??'',v=>{leg.ws=n(v,'');},'',{inputmode:'decimal',min:'0',placeholder:String(st.ws)}));
+    }
+    const out=document.createElement('div'); out.className='legout';
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg'); svg.setAttribute('viewBox','-50 -50 100 100'); svg.setAttribute('role','img');
+    const nums=document.createElement('div'); nums.className='nums';
+    const sW=stat('','WCA'),sT=stat('','True hdg'),sM=stat('mh','Mag hdg'),sG=stat('','Groundspeed'),sTi=stat('','Time');
+    [sW,sT,sM,sG,sTi].forEach(s=>nums.appendChild(s.el));
+    out.appendChild(svg); out.appendChild(nums);
+    const err=document.createElement('div'); err.className='msg warn'; err.hidden=true; err.setAttribute('role','status');
+    box.appendChild(head); box.appendChild(ins); box.appendChild(out); box.appendChild(err);
+    legsEl.appendChild(box);
+    legUI.push({svg,out,err,w:sW.b,t:sT.b,m:sM.b,g:sG.b,ti:sTi.b});
+  });
+}
+function drawRose(svg,tc,th,wd,ws){
+  const NS='http://www.w3.org/2000/svg'; svg.textContent='';
+  const el=(nm,a)=>{const e=document.createElementNS(NS,nm);for(const k in a)e.setAttribute(k,a[k]);svg.appendChild(e);return e;};
+  const pt=(deg,r)=>[Math.sin(deg*rad)*r,-Math.cos(deg*rad)*r];
+  el('circle',{cx:0,cy:0,r:44,fill:'none',stroke:'var(--line)','stroke-width':1.5});
+  const nn=pt(0,44); el('line',{x1:nn[0],y1:nn[1],x2:0,y2:-38,stroke:'var(--mute)','stroke-width':2});
+  const nt=el('text',{x:0,y:-26,'text-anchor':'middle','font-size':9}); nt.textContent='N';
+  if(ws>0){ // wind arrow: blows from wd toward centre
+    const a=pt(wd,46),b=pt(wd,20);
+    el('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:'var(--wind)','stroke-width':3,'stroke-linecap':'round'});
+    const h1=pt(wd+14,26),h2=pt(wd-14,26);
+    el('polygon',{points:b[0]+','+b[1]+' '+h1[0]+','+h1[1]+' '+h2[0]+','+h2[1],fill:'var(--wind)'});
+  }
+  const t=pt(tc,40); el('line',{x1:0,y1:0,x2:t[0],y2:t[1],stroke:'var(--ink)','stroke-width':2,'stroke-dasharray':'4 3'});
+  const h=pt(th,40); el('line',{x1:0,y1:0,x2:h[0],y2:h[1],stroke:'var(--acc)','stroke-width':3.5,'stroke-linecap':'round'});
+  el('circle',{cx:0,cy:0,r:3,fill:'var(--acc)'});
+  svg.setAttribute('aria-label','Track '+hdgTxt(tc)+' dashed, heading '+hdgTxt(th)+', wind from '+hdgTxt(wd));
+}
+function update(){
+  const nc=navCompute(st);
+  nc.rows.forEach(({leg,r},i)=>{
+    const ui=legUI[i];
+    if(r.err){
+      ui.err.hidden=false; ui.err.textContent=r.err; ui.out.style.opacity=.35;
+      [ui.w,ui.t,ui.m,ui.g,ui.ti].forEach(b=>b.textContent='–');
+    } else {
+      ui.err.hidden=true; ui.out.style.opacity=1;
+      ui.w.textContent=wcaTxt(r.wca); ui.t.textContent=hdgTxt(r.th); ui.m.textContent=hdgTxt(r.mh);
+      ui.g.textContent=Math.round(r.gs)+' kt'; ui.ti.textContent=mmss(r.time);
+      drawRose(ui.svg,n(leg.tc,0),r.th,r.wd,r.ws);
+    }
+  });
+  $('log').innerHTML=navLogHTML(nc,fuelRate(),st.fuelUnit==='l'?'L':'USG');
+  $('maths').innerHTML=mathsNav(nc,st)+eq(String.raw`F_{\text{leg}} = \dot{F}\times\frac{t}{60}, \quad \dot{F} = ${fx(fuelRate(),1)}\,\text{${st.fuelUnit==='l'?'L':'USG'}/h}`);
+  showPohFlow(); navSave(st);
+}
+function bind(id,key,parse){const e=$(id);e.value=st[key];e.addEventListener('input',()=>{st[key]=parse(e.value);update();});}
+bind('tas','tas',v=>n(v,0)); bind('wd','wd',v=>n(v,NaN)); bind('ws','ws',v=>n(v,0));
+bind('var','v',v=>Math.abs(n(v,0))); bind('varew','vew',v=>v==='E'?'E':'W');
+bind('fuel','fuel',v=>v===''?'':n(v,'')); bind('fuelu','fuelUnit',v=>v==='l'?'l':'usg');
+$('perleg').checked=st.perLeg;
+$('perleg').addEventListener('change',()=>{st.perLeg=$('perleg').checked;renderLegs();update();});
+$('add').addEventListener('click',()=>{
+  if(st.legs.length>=40) return;
+  st.legs.push({name:'Leg '+(st.legs.length+1),tc:'',d:'',wd:'',ws:'',alt:'',msa:'',freq:''}); renderLegs(); update();
+  const inputs=$('legs').querySelectorAll('.leg:last-child input'); if(inputs[1]) inputs[1].focus();
+});
+$('reset').addEventListener('click',()=>{ if(!confirm('Clear all legs?')) return; st.legs=[{name:'Leg 1',tc:'',d:''}]; renderLegs(); update(); });
+$('print').addEventListener('click',()=>window.print());
+renderLegs(); update();
+</script>
+</body></html>

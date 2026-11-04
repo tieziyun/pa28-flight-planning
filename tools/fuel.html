@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>G-CEZO Fuel Planning</title>
+<link rel="stylesheet" href="gcezo.css">
+<script src="gcezo-charts.js"></script><script src="gcezo-lib.js"></script><script src="gcezo-math.js"></script><script src="gcezo-ui.js"></script><script src="gcezo-glossary.js"></script><script src="gcezo-plan.js"></script>
+</head><body>
+<main>
+<div class="grid">
+<section class="card">
+  <h2>Cruise</h2>
+  <label class="f">Mixture <select id="mix"><option value="bestPower">Best power (Fig 5-21)</option><option value="bestEconomy">Best economy (Fig 5-23)</option></select></label>
+  <label class="f">Power <select id="pwr"><option>75</option><option>65</option><option>55</option></select></label>
+  <label class="f">Fuel flow override GPH <small>blank = POH</small><input id="gph" type="number" placeholder=""></label>
+  <label class="f">Cruise time min <input id="cruise" type="number" value="60"></label>
+  <h2 style="margin-top:14px">Climb (POH Fig 5-19)</h2>
+  <label class="f">Fuel to climb USG <small>read from chart</small><input id="climb" type="number" value="1.4" step="0.1"></label>
+  <label class="f">Time to climb min <input id="climbt" type="number" value="8.5" step="0.5"></label>
+  <p class="note">Fig 5-19 example: 1000 ft / 15&deg;C departure to 5000 ft / 5&deg;C cruise &rarr; 1.4 gal, 8.5 min, 10.5 nm.</p>
+  <h2 style="margin-top:14px">Reserves</h2>
+  <label class="f">Contingency % of trip <input id="cont" type="number" value="10"></label>
+  <label class="f">Flight type <small>Part-NCO reserve</small><select id="ftype"><option value="day">Day</option><option value="dayLocal">Day, local (in sight of aerodrome)</option><option value="night">Night</option></select></label>
+  <label class="f">Final reserve min <input id="res" type="number" value="45"></label>
+  <label class="f">Alternate / diversion min <input id="alt" type="number" value="0"></label>
+  <label class="f">Fuel on board USG <small id="fobmax"></small><input id="fob" type="number" value="48"></label>
+</section>
+<section class="card">
+  <h2>Fuel plan</h2>
+  <div id="out"></div>
+  <p class="note">POH fuel consumption: best economy 75% 8.5, 65% 7.5, 55% 6.6 GPH; best power 75% 10.0, 65% 8.8, 55% 7.8 GPH.
+  Start, taxi &amp; run-up 7 lb (POH Fig 6-11) = 1.17 USG at 6 lb/USG. Usable fuel 48 USG (POH 2.21). These are POH defaults; values changed on the Aircraft settings page are used instead.
+  Part-NCO minimum final reserve (aeroplanes, per CAA SS05): day remaining in sight of and returning to the aerodrome 10 min; day 30 min; night 45 min, at normal cruising altitude &mdash; regard these as minimums.
+  Defaults are the most conservative (best power, 75%); reserve and contingency are pilot/operator policy. Reserve, contingency, mixture and power are edited above, per flight.
+  Reserve and alternate fuel are computed at the cruise fuel flow.</p>
+</section>
+</div>
+<section class="card" style="margin-top:16px"><h2>Show the maths</h2><details class="maths" open><summary>Equations with the numbers above</summary><div id="maths"></div></details></section>
+</main>
+<script>
+navBar('fuel.html');
+$('fobmax').textContent=`${GCEZO.fuel.usableUSG} usable`;
+const ids=['mix','pwr','gph','cruise','climb','climbt','cont','ftype','res','alt','fob'];
+setDefault('mix',GCEZO.plan.mixture); setDefault('pwr',String(GCEZO.plan.power));
+setDefault('cont',GCEZO.plan.contingencyPct); setDefault('ftype',GCEZO.plan.flightType); setDefault('res',GCEZO.plan.reserveMin); setDefault('fob',GCEZO.fuel.usableUSG);
+const save=persist('gcezo-fuel-v2',ids);
+function calc(){
+  const poh=GCEZO.fuelFlowGPH[$('mix').value][$('pwr').value];
+  const gph=$('gph').value!==''?num('gph'):poh;
+  const taxi=-GCEZO.taxiAllowance.weight/GCEZO.fuel.lbPerUSG;
+  const climb=num('climb'), cruise=gph*num('cruise')/60;
+  const trip=climb+cruise, cont=trip*num('cont')/100, alt=gph*num('alt')/60, res=gph*num('res')/60;
+  const req=taxi+trip+cont+alt+res, fob=num('fob');
+  const endur=(fob-taxi)/gph*60;
+  const row=(t,v)=>`<tr><td>${t}</td><td>${fx(v,1)}</td><td>${fx(v*GCEZO.conv.usgToL,1)}</td><td>${fx(v*GCEZO.fuel.lbPerUSG,0)}</td></tr>`;
+  $('out').innerHTML=`<div class="kv"><span>Cruise fuel flow</span><b>${fx(gph,1)} GPH ${$('gph').value!==''?'(override)':'(POH)'} = ${fx(gph*GCEZO.conv.usgToL,1)} L/h</b></div>
+  <table style="margin-top:8px"><tr><th>Item</th><th>USG</th><th>L</th><th>lb</th></tr>
+  ${row('Start, taxi & run-up',taxi)}${row('Climb',climb)}${row('Cruise',cruise)}${row('Contingency',cont)}${row('Alternate',alt)}${row('Final reserve',res)}
+  <tr class="tot"><td>Required</td><td>${fx(req,1)}</td><td>${fx(req*GCEZO.conv.usgToL,1)}</td><td>${fx(req*GCEZO.fuel.lbPerUSG,0)}</td></tr>
+  ${row('On board',fob)}${row('Extra',fob-req)}</table>
+  <div style="margin-top:10px">${pill(fob>=req,'Fuel sufficient','Fuel insufficient')} ${(()=>{const nr=NCO_RESERVE[$('ftype').value];return num('res')>=nr.min?`<span class="pill ok">Reserve &ge; Part-NCO ${nr.min} min</span>`:`<span class="pill bad">Reserve below Part-NCO ${nr.min} min</span>`;})()} ${fob>GCEZO.fuel.usableUSG?`<span class="pill bad">exceeds ${GCEZO.fuel.usableUSG} USG usable</span>`:''}</div>
+  <div class="kv" style="margin-top:8px"><span>Trip fuel (for W&amp;B landing weight)</span><b>${fx(trip,1)} USG</b>
+  <span>Endurance after taxi at cruise flow</span><b>${Math.floor(endur/60)} h ${fx(endur%60)} min</b>
+  <span>Total flight time</span><b>${fx(num('climbt')+num('cruise'))} min</b></div>`;
+  $('maths').innerHTML=mathsFuel({taxi,climb,gph,cruiseMin:num('cruise'),cruise,contPct:num('cont'),cont,altMin:num('alt'),alt,resMin:num('res'),res,req,fob,endur});
+  save();
+}
+ids.forEach(i=>$(i).addEventListener('input',calc)); calc();
+</script>
+</body></html>

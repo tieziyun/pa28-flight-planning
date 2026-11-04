@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>G-CEZO Pre-flight Planning</title>
+<link rel="stylesheet" href="gcezo.css">
+<script src="gcezo-charts.js"></script><script src="gcezo-lib.js"></script><script src="gcezo-math.js"></script><script src="gcezo-ui.js"></script><script src="gcezo-glossary.js"></script><script src="gcezo-sheets.js"></script><script src="gcezo-plan.js"></script>
+</head><body>
+<main>
+<section class="card" id="summary"></section>
+
+<section class="card" style="margin-top:16px">
+  <h2>Flight</h2>
+  <div class="kv2">
+  <label class="f">Date <input id="date" type="date"></label>
+  <label class="f">Pilot <input id="pilot" type="text"></label>
+  <label class="f">Departure <input id="dep" type="text"></label>
+  <label class="f">Destination <input id="dest" type="text"></label>
+  <label class="f">ETD (UTC) <input id="etd" type="time"></label>
+  <label class="f">Category <select id="cat"><option value="normal">Normal</option><option value="utility">Utility</option></select></label>
+  <label class="f">Flight type <small>Part-NCO reserve</small><select id="ftype"><option value="day">Day</option><option value="dayLocal">Day, local (in sight of aerodrome)</option><option value="night">Night</option></select></label>
+  </div>
+</section>
+
+<section class="card" style="margin-top:16px">
+  <h2><span class="step">1</span>Pilot</h2>
+  <div id="pl_step1"></div>
+</section>
+
+<section class="card" style="margin-top:16px">
+  <h2><span class="step">2</span>Documents &amp; aircraft</h2>
+  <div id="pl_step2"></div>
+</section>
+
+<section class="card" style="margin-top:16px">
+  <h2><span class="step">3</span>Weather &amp; NOTAMs</h2>
+  <div id="pl_step3"></div>
+  <label class="row" style="margin-top:8px;font-weight:600"><input type="checkbox" id="wx_go"> Weather permits the flight (at or above VFR minima and my personal minimums for departure, en route and destination)</label>
+  <details style="margin-top:8px"><summary>VMC minima (SERA, UK) &mdash; SS05</summary><div style="overflow-x:auto" id="vmc"></div></details>
+</section>
+
+<section class="card" style="margin-top:16px">
+  <h2><span class="step">4</span>Route &amp; navigation log</h2>
+  <div class="kv2">
+    <label class="f">Cruise TAS kt <small>Fig 5-21/5-23</small><input id="nav_tas" data-nav="tas" type="number"></label>
+    <label class="f">Wind from &deg;T <input id="nav_wd" data-nav="wd" type="number"></label>
+    <label class="f">Wind speed kt <input id="nav_ws" data-nav="ws" type="number"></label>
+    <label class="f">Variation &deg; <span class="varrow"><input id="nav_v" data-nav="v" type="number" step="0.5"><select id="nav_vew" data-nav="vew"><option value="W">W</option><option value="E">E</option></select></span></label>
+  </div>
+  <div class="row" style="margin-top:6px"><label class="row"><input type="checkbox" id="nav_perleg" data-nav="perLeg"> Per-leg wind</label> <a href="nav-legs.html">Edit legs, altitudes, frequencies and per-leg winds on the Nav legs page &rarr;</a></div>
+  <div style="overflow-x:auto;margin-top:8px" id="navlog"></div>
+  <h3 class="stephead">Daylight</h3>
+  <div class="kv2">
+    <label class="f">Destination lat &deg;N <input id="dlat" type="number" step="0.0001" placeholder="51.2136"></label>
+    <label class="f">Destination lon &deg;E <small>W is negative</small><input id="dlon" type="number" step="0.0001" placeholder="-0.1386"></label>
+    <label class="f">Land at least N min before sunset <input id="sunmargin" type="number" min="0" step="5"></label>
+  </div>
+  <div id="sun" class="note"></div>
+  <div id="pl_step4"></div>
+</section>
+
+<section class="card" style="margin-top:16px">
+  <h2><span class="step">5</span>Fuel</h2>
+  <div class="kv2">
+    <label class="f">Mixture <select id="mix"><option value="bestPower">Best power</option><option value="bestEconomy">Best economy</option></select></label>
+    <label class="f">Power % <select id="pwr"><option>75</option><option>65</option><option>55</option></select></label>
+    <label class="f">Climb fuel USG <small>Fig 5-19</small><input id="climb" type="number" value="1.4" step="0.1"></label>
+    <label class="f">Climb time min <small>Fig 5-19</small><input id="climbt" type="number" value="8.5" step="0.5"></label>
+    <label class="f">Contingency % <input id="cont" type="number"></label>
+    <label class="f">Final reserve min <input id="res" type="number"></label>
+    <label class="f">Alternate min <input id="alt" type="number" value="0"></label>
+    <label class="f">Fuel on board USG <small id="fobmax"></small><input id="fob" type="number"></label>
+  </div>
+  <div id="fuelout" style="margin-top:10px"></div>
+</section>
+
+<section class="card" style="margin-top:16px">
+  <h2><span class="step">6</span>Weight &amp; balance</h2>
+  <div class="grid">
+    <div>
+      <label class="f">Pilot kg <input id="p1" type="number" value="80"></label>
+      <label class="f">Front passenger kg <input id="p2" type="number" value="0"></label>
+      <label class="f">Rear passenger(s) kg <input id="p3" type="number" value="0"></label>
+      <label class="f">Baggage kg <small id="bagmax"></small><input id="bag" type="number" value="0"></label>
+      <p class="note">Fuel on board and trip fuel come from step 5.</p>
+      <div id="wbmsg"></div>
+    </div>
+    <div id="env"></div>
+  </div>
+  <div id="wbtbl"></div>
+</section>
+
+<section class="card" style="margin-top:16px">
+  <h2><span class="step">7</span>Take-off &amp; landing performance</h2>
+  <h3 class="stephead">Flight assumptions</h3>
+  <div id="assume"></div>
+  <div class="grid" style="margin-top:8px">
+  <div>
+    <h3 class="stephead">Departure &mdash; take-off (at take-off weight from step 6)</h3>
+    <label class="f">Elevation ft <input id="to_elev" type="number" value="0"></label>
+    <label class="f">QNH hPa <input id="to_qnh" type="number" value="1013"></label>
+    <label class="f">OAT &deg;C <input id="to_oat" type="number" value="15"></label>
+    <label class="f">Flaps <select id="to_flap"><option value="0">0&deg;</option><option value="25">25&deg;</option></select></label>
+    <label class="f">Runway &deg;M <input id="to_rwy" type="number" value="270"></label>
+    <label class="f">Wind from &deg;M / kt <span class="row" style="flex-wrap:nowrap"><input id="to_wd" type="number" value="270"><input id="to_ws" type="number" value="0"></span></label>
+    <label class="f">TORA m <input id="to_avail" type="number" value="0"></label>
+    <div id="to_fac"></div><div id="to_out"></div>
+  </div>
+  <div>
+    <h3 class="stephead">Destination &mdash; landing (Fig 5-35 is for 2325 lb)</h3>
+    <label class="f">Elevation ft <input id="ld_elev" type="number" value="0"></label>
+    <label class="f">QNH hPa <input id="ld_qnh" type="number" value="1013"></label>
+    <label class="f">OAT &deg;C <input id="ld_oat" type="number" value="15"></label>
+    <label class="f">Runway &deg;M <input id="ld_rwy" type="number" value="270"></label>
+    <label class="f">Wind from &deg;M / kt <span class="row" style="flex-wrap:nowrap"><input id="ld_wd" type="number" value="270"><input id="ld_ws" type="number" value="0"></span></label>
+    <label class="f">LDA m <input id="ld_avail" type="number" value="0"></label>
+    <div id="ld_fac"></div><div id="ld_out"></div>
+  </div>
+  </div>
+</section>
+
+<section class="card" style="margin-top:16px">
+  <h2><span class="step">8</span>Before you go</h2>
+  <div id="pl_step8"></div>
+  <h3 class="stephead">Normal procedures &mdash; 4.5a Preparation (POH, verbatim)</h3>
+  <div id="prep"></div>
+  <details style="margin-top:8px"><summary>In flight: FREDA checks &mdash; SS05</summary><div id="freda"></div></details>
+</section>
+
+<section class="card" style="margin-top:16px">
+  <h2>Show the maths</h2>
+  <details class="maths"><summary>All equations with this flight's numbers</summary><div id="maths"></div></details>
+</section>
+<p class="note">Sources: POH Report VB-1360 (Sections 2, 4, 5, 6), Weight &amp; C.G. Schedule LW 4072, the club spreadsheets, CAA Safety Sense 05, the CAA airspace-infringement guidance, SERA.2010(b) and the Skyway Code ("Practice" = common UK GA practice).
+Planning is iterative: if fuel, W&amp;B or performance fails, change the plan (fuel, load, route, runway) and re-check every later step. <span id="wn"></span>
+<button onclick="window.print()">Print</button></p>
+</main>
+<script>
+navBar('preflight.html');
+$('bagmax').textContent=`max ${GCEZO.limits.normal.baggage} lb / ${fx(GCEZO.limits.normal.baggage*GCEZO.conv.lbToKg,1)} kg`;
+$('fobmax').textContent=`${GCEZO.fuel.usableUSG} usable`;
+for(const s of ['to','ld']) $(s+'_fac').innerHTML=factorBoxes(s);
+// planning checklist items, placed in their step (ids unchanged so ticks are kept)
+const stepItems={};
+PLAN_GROUPS.forEach((g,gi)=>{
+  const html=`<h3 class="stephead">${g.title}</h3>`+g.items.map((it,ii)=>`<label class="row" style="align-items:flex-start;margin:3px 0"><input type="checkbox" id="pl_${gi}_${ii}" class="plchk" data-step="${g.step}"> <span>${it[0]} <small class="note">[${it[1]}]</small></span></label>`).join('');
+  stepItems[g.step]=(stepItems[g.step]||'')+html;
+});
+for(const k in stepItems) $('pl_step'+k).innerHTML=stepItems[k];
+// POH 4.5a Preparation checklist, verbatim and in POH order
+const PREP=[['Airplane Status','AIRWORTHY, PAPERS ON BOARD'],['Weather','SUITABLE'],['Baggage','WEIGHED, STOWED, TIED'],['Weight and C.G.','WITHIN LIMITS'],['Navigation','PLANNED'],['Charts and Navigation Equipment','ON BOARD'],['Performance and Range','COMPUTED AND SAFE']];
+$('prep').innerHTML=PREP.map((p,i)=>`<label class="row"><input type="checkbox" id="prep${i}" class="prepchk"> ${p[0]} ........ ${p[1]}</label>`).join('');
+$('vmc').innerHTML=VMC_TABLE_HTML;
+$('freda').innerHTML='<div class="kv">'+FREDA.map(f=>`<span><b>${f[0]}</b></span><span>${f[1]}</span>`).join('')+'</div><p class="note">Conduct the check at significant turning points of the route or approximately every 10 minutes.</p>';
+// shared nav state
+const nav=navLoad();
+document.querySelectorAll('[data-nav]').forEach(e=>{
+  const k=e.dataset.nav;
+  if(e.type==='checkbox'){ e.checked=!!nav[k]; e.addEventListener('change',()=>{nav[k]=e.checked;navSave(nav);calc();}); return; }
+  e.value=nav[k];
+  e.addEventListener('input',()=>{const v=e.value; nav[k]=k==='vew'?(v==='E'?'E':'W'):k==='v'?Math.abs(parseFloat(v)||0):k==='wd'?(isFinite(parseFloat(v))?parseFloat(v):NaN):(parseFloat(v)||0); navSave(nav); calc();});
+});
+// defaults (conservative) then restore this browser's saved inputs
+setDefault('ftype',GCEZO.plan.flightType); setDefault('mix',GCEZO.plan.mixture); setDefault('pwr',String(GCEZO.plan.power));
+setDefault('cont',GCEZO.plan.contingencyPct); setDefault('res',GCEZO.plan.reserveMin); setDefault('fob',GCEZO.fuel.usableUSG);
+setDefault('sunmargin',GCEZO.plan.sunsetMarginMin);
+const ids=[...document.querySelectorAll('main input:not([data-nav]),main select:not([data-nav])')].map(e=>e.id).filter(i=>i&&!i.startsWith('as_'));
+const save=persist('gcezo-pre-v3',ids);
+if(!$('date').value) $('date').value=new Date().toISOString().slice(0,10);
+
+function calc(){
+  const checks=[]; // [ok(true/false/null), text, step]
+  const add=(step,ok,t)=>checks.push([ok,t,step]);
+  const ticked=st=>{const a=[...document.querySelectorAll(`.plchk[data-step="${st}"]`)];return [a.filter(e=>e.checked).length,a.length];};
+  // 1-3 checklist steps
+  for(const st of [1,2,3]){ const [d,n]=ticked(st); add(st,d===n?true:null,`${d}/${n} items ticked`); }
+  add(3,$('wx_go').checked?true:false,$('wx_go').checked?'Weather permits the flight':'Weather not yet confirmed as suitable &mdash; do not continue planning until it is');
+  // 4 route
+  const nc=navCompute(nav), cruiseMin=nc.totT;
+  nc.rows.forEach(({leg,r},i)=>{ if(r.err) add(4,false,`Leg ${i+1} (${esc(leg.name)}): ${r.err}`); });
+  navPlogChecks(nc).forEach(c=>add(4,c[0],c[1]));
+  { const [d,n]=ticked(4); add(4,d===n?true:null,`${d}/${n} route &amp; aerodrome items ticked`); }
+  const gph=GCEZO.fuelFlowGPH[$('mix').value][$('pwr').value];
+  $('navlog').innerHTML=navLogHTML(nc,gph,'USG');
+  { const lat=parseFloat($('dlat').value), lon=parseFloat($('dlon').value), etd=$('etd').value, mg=num('sunmargin');
+    if(isFinite(lat)&&isFinite(lon)&&$('date').value){
+      const ss=sunEvent($('date').value,lat,lon,false), sr=sunEvent($('date').value,lat,lon,true);
+      let txt=ss==null?'No sunset/sunrise at this latitude/date':`Destination sunrise ${hhmm(sr)} UTC, sunset ${hhmm(ss)} UTC; night (UK: 30 min after sunset) from ${hhmm(ss+30)} UTC.`;
+      if(etd&&ss!=null){
+        const [h,m]=etd.split(':').map(Number), eta=h*60+m+num('climbt')+cruiseMin, lim=ss-mg;
+        txt+=` ETA ${hhmm(eta)} UTC = ETD + climb ${fx(num('climbt'),1)} + en route ${fx(cruiseMin,1)} min.`;
+        if($('ftype').value!=='night') add(4,eta<=lim,`Daylight: ETA ${hhmm(eta)} UTC vs latest ${hhmm(lim)} UTC (sunset${mg?` &minus; ${mg} min`:''})`);
+        if($('ftype').value!=='night'&&h*60+m<sr) add(4,false,`Daylight: ETD ${etd} UTC is before sunrise ${hhmm(sr)} UTC`);
+      } else add(4,null,'Daylight: enter ETD (UTC) to check arrival against sunset');
+      $('sun').textContent=txt;
+    } else { $('sun').textContent='Enter destination latitude/longitude for sunrise/sunset (standard almanac algorithm, zenith 90.833°, ~1-2 min accuracy).'; add(4,null,'Daylight: enter destination position to check sunset'); }
+  }
+  // 5 fuel
+  const taxi=-GCEZO.taxiAllowance.weight/GCEZO.fuel.lbPerUSG, climb=num('climb'), cruise=gph*cruiseMin/60;
+  const trip=climb+cruise, cont=trip*num('cont')/100, alt=gph*num('alt')/60, res=gph*num('res')/60, req=taxi+trip+cont+alt+res, fob=num('fob');
+  const endur=(fob-taxi)/gph*60;
+  $('fuelout').innerHTML=`<div class="kv"><span>Distance / en-route time</span><b>${fx(nc.totD,1)} nm / ${fx(cruiseMin)} min (+ climb ${fx(num('climbt'),1)} min)</b>
+   <span>Fuel flow (POH ${$('mix').selectedOptions[0].text.toLowerCase()} ${$('pwr').value}%)</span><b>${fx(gph,1)} GPH</b>
+   <span>Taxi ${fx(taxi,2)} + climb ${fx(climb,1)} + cruise ${fx(cruise,1)} + contingency ${fx(cont,1)} + alternate ${fx(alt,1)} + reserve ${fx(res,1)}</span><b>${fx(req,1)} USG required</b>
+   <span>On board</span><b>${fx(fob,1)} USG (${fx(fob-req,1)} extra)</b>
+   <span>Endurance after taxi</span><b>${Math.floor(endur/60)} h ${fx(endur%60)} min</b></div>`;
+  add(5,fob>=req,`${fx(req,1)} USG required, ${fx(fob,1)} on board`);
+  { const nr=NCO_RESERVE[$('ftype').value]; add(5,num('res')>=nr.min,`Final reserve ${fx(num('res'))} min vs Part-NCO minimum ${nr.min} min (${nr.label.toLowerCase()})`); }
+  if(fob>GCEZO.fuel.usableUSG) add(5,false,`Fuel on board exceeds ${GCEZO.fuel.usableUSG} USG usable`);
+  // 6 W&B
+  const cat=$('cat').value, k=GCEZO.conv.kgToLb, kgTot=num('p1')+num('p2')+num('p3')+num('bag');
+  const wb=wbCalc({front:(num('p1')+num('p2'))*k,rear:num('p3')*k,baggage:num('bag')*k,fuelUSG:fob,tripFuelUSG:trip,category:cat});
+  const wm=wbMessages(wb,cat);
+  $('wbmsg').innerHTML=wm.map(m=>`<div class="msg bad">${m}</div>`).join('');
+  $('env').innerHTML=envelopeSVG([{label:'T/O',w:wb.takeoff.w,cg:wb.takeoff.cg,ok:wb.takeoff.chk.ok},{label:'LDG',w:wb.landing.w,cg:wb.landing.cg,ok:wb.landing.chk.ok}],cat);
+  $('wbtbl').innerHTML=wbTableHTML(wb);
+  add(6,wm.length===0,`T/O ${fx(wb.takeoff.w,1)} lb @ ${fx(wb.takeoff.cg,2)} in, LDG ${fx(wb.landing.w,1)} lb @ ${fx(wb.landing.cg,2)} in`);
+  wm.forEach(m=>add(6,false,m));
+  // 7 performance
+  let maths=mathsNav(nc,nav)+mathsFuel({taxi,climb,gph,cruiseMin,cruise,contPct:num('cont'),cont,altMin:num('alt'),alt,resMin:num('res'),res,req,fob,endur})+mathsWB(wb,cat,kgTot);
+  const perf=(s,gr,d50,p,sheets)=>{
+    const fd=factorDetail(s), reqM=d50*fd.product*FT_TO_M, av=num(s+'_avail'), xw=Math.abs(p.wc.cross), nm=s==='to'?'Take-off':'Landing';
+    $(s+'_out').innerHTML=`<div class="kv"><span>Pressure alt</span><b>${fx(p.pa)} ft</b>
+     <span>Head/tail &middot; cross</span><b>${fx(p.wc.head,1)} &middot; ${fx(xw,1)} kt</b>
+     <span>Wind used in chart</span><b>${fx(p.cw,1)} kt</b>
+     <span>Ground roll</span><b>${fx(gr*FT_TO_M)} m</b><span>Over 50 ft</span><b>${fx(d50*FT_TO_M)} m</b>
+     <span>${s==='to'?'TODR':'LDR'} (&times;${fx(fd.product,3)})</span><b>${fx(reqM)} m</b></div>`+
+     runwaySVG(s,gr*FT_TO_M,d50*FT_TO_M,reqM,av)+`<details class="sheetbox" open><summary>Chart worksheet (POH, this flight's path in red)</summary>${sheets}</details>`+p.warn.map(w=>`<div class="msg warn">${w}</div>`).join('');
+    if(av>0) add(7,reqM<=av,`${nm}: ${s==='to'?'TODR':'LDR'} ${fx(reqM)} m vs ${s==='to'?'TORA':'LDA'} ${fx(av)} m`);
+    else add(7,null,`${nm}: ${s==='to'?'TODR':'LDR'} ${fx(reqM)} m (enter ${s==='to'?'TORA':'LDA'} to check)`);
+    if(xw>GCEZO.speeds.maxXwind) add(7,false,`${nm}: crosswind ${fx(xw,1)} kt exceeds ${GCEZO.speeds.maxXwind} kt demonstrated`);
+    p.warn.forEach(w=>add(7,null,`${nm}: ${w}`));
+    maths+=mathsPerf({...p,fac:fd});
+  };
+  { const elev=num('to_elev'),qnh=num('to_qnh'),pa=pressureAlt(elev,qnh),wc=windComponents(num('to_wd'),num('to_ws'),num('to_rwy')),cw=chartWind(wc.head),fl=$('to_flap').value;
+    const g=takeoffChart(fl==='0'?'gr0':'gr25',pa,num('to_oat'),wb.takeoff.w,cw),t=takeoffChart(fl==='0'?'to0':'to25',pa,num('to_oat'),wb.takeoff.w,cw);
+    perf('to',g.dist,t.dist,{kind:'to',elev,qnh,pa,oat:num('to_oat'),weight:wb.takeoff.w,wdir:num('to_wd'),wkt:num('to_ws'),rwy:num('to_rwy'),wc,cw,chart:{gr:g,a50:t},warn:[...new Set([...g.warn,...t.warn])]},
+      takeoffSheetSVG(fl==='0'?'gr0':'gr25',pa,num('to_oat'),wb.takeoff.w,cw)+takeoffSheetSVG(fl==='0'?'to0':'to25',pa,num('to_oat'),wb.takeoff.w,cw)); }
+  { const elev=num('ld_elev'),qnh=num('ld_qnh'),pa=pressureAlt(elev,qnh),wc=windComponents(num('ld_wd'),num('ld_ws'),num('ld_rwy')),cw=chartWind(wc.head),l=landingChart(pa,num('ld_oat'),cw);
+    perf('ld',l.groundRoll,l.over50,{kind:'ld',elev,qnh,pa,oat:num('ld_oat'),weight:2325,wdir:num('ld_wd'),wkt:num('ld_ws'),rwy:num('ld_rwy'),wc,cw,chart:l,warn:l.warn},landingSheetSVG(pa,num('ld_oat'),cw)); }
+  // 8 before you go
+  { const [d,n]=ticked(8); add(8,d===n?true:null,`${d}/${n} items ticked`);
+    const pp=[...document.querySelectorAll('.prepchk')]; const pd=pp.filter(e=>e.checked).length; add(8,pd===pp.length?true:null,`POH 4.5a Preparation: ${pd}/${pp.length}`); }
+  $('maths').innerHTML=maths;
+  // summary, in planning order
+  const allOk=checks.every(c=>c[0]!==false);
+  let h=`<h2>${esc($('dep').value||'DEP')} &rarr; ${esc($('dest').value||'DEST')} &middot; ${$('date').value} ${$('pilot').value?'&middot; '+esc($('pilot').value):''}</h2>
+   <div style="margin-bottom:6px">${pill(allOk,'No limits exceeded (still verify against the POH)','Check items below')}</div>`;
+  for(let st=1;st<=8;st++){
+    const cs=checks.filter(c=>c[2]===st); if(!cs.length) continue;
+    h+=`<div class="stephead"><span class="step">${st}</span>${PLAN_STEPS[st]}</div>`+cs.map(c=>`<div class="msg ${c[0]===false?'bad':c[0]===null?'warn':''}" ${c[0]===true?'style="background:var(--okbg);color:var(--ok)"':''}>${c[1]}</div>`).join('');
+  }
+  $('summary').innerHTML=h;
+  $('wn').textContent=windNote();
+  save();
+}
+assumptionsPanel('assume',calc);
+document.querySelectorAll('main input:not([data-nav]),main select:not([data-nav])').forEach(e=>{ if(!e.id.startsWith('as_')) e.addEventListener('input',calc); });
+calc();
+</script>
+</body></html>

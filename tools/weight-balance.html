@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>G-CEZO Weight &amp; Balance</title>
+<link rel="stylesheet" href="gcezo.css">
+<script src="gcezo-charts.js"></script><script src="gcezo-lib.js"></script><script src="gcezo-math.js"></script><script src="gcezo-ui.js"></script><script src="gcezo-glossary.js"></script>
+</head><body>
+<main>
+<div class="grid">
+  <section class="card">
+    <h2>Load</h2>
+    <label class="f">Category
+      <select id="cat"><option value="normal">Normal (2325 lb)</option><option value="utility">Utility (2020 lb)</option></select></label>
+    <label class="f">Mass units <select id="mu"><option value="lb">lb</option><option value="kg">kg</option></select></label>
+    <label class="f">Pilot <input id="p1" type="number" value="80"></label>
+    <label class="f">Front passenger <input id="p2" type="number" value="0"></label>
+    <label class="f">Rear passenger(s) <input id="p3" type="number" value="0"></label>
+    <label class="f">Baggage <small id="bagmax"></small><input id="bag" type="number" value="0"></label>
+    <label class="f">Fuel units <select id="fu"><option value="usg">US gal</option><option value="l">litres</option></select></label>
+    <label class="f">Fuel on board <small id="fobmax"></small><input id="fuel" type="number" value="48"></label>
+    <label class="f">Trip fuel <input id="trip" type="number" value="8"></label>
+    <div class="row"><button data-f="full">Full</button><button data-f="tabs">Tabs</button></div>
+    <p class="note">Tabs value is from the club PA28 Mass &amp; Balance spreadsheet (not stated in the POH); editable on the Aircraft settings page.</p>
+  </section>
+  <section class="card">
+    <h2>Result</h2>
+    <div id="status"></div>
+    <div class="kv" id="sum"></div>
+    <div id="env"></div>
+  </section>
+</div>
+<section class="card" style="margin-top:16px">
+  <h2>Loading form (POH Fig 6-11)</h2>
+  <div id="tbl"></div>
+  <p class="note">Basic weight 1533 lb, C.G. 85.05 in, moment 130,383 lb.in (Weight &amp; C.G. Schedule LW 4072, weighing report 08JA4072, 29-Jan-08).
+  Arms: front seats 80.5, rear seats 118.1, fuel 95.0, baggage 142.8 (POH Fig 6-11). Fuel at 6 lb/USG (POH Fig 6-13).
+  Start/taxi/run-up allowance &minus;7 lb at 95.0 (POH Fig 6-11). C.G. limits POH 2.13: forward 83.0 at 1950 lb and less, straight line to 87.0 at 2325 lb (utility 83.8 at 2020 lb); aft 93.0.
+  These are the defaults; any value changed on the Aircraft settings page is used instead.
+  Datum 78.4 in ahead of the wing leading edge at the inboard intersection of the straight and tapered section.</p>
+</section>
+<section class="card" style="margin-top:16px"><h2>Show the maths</h2><details class="maths" open><summary>Equations with the numbers above</summary><div id="maths"></div></details></section>
+</main>
+<script>
+navBar('weight-balance.html');
+$('bagmax').textContent=`max ${GCEZO.limits.normal.baggage} lb normal / ${GCEZO.limits.utility.baggage} utility`;
+$('fobmax').textContent=`${GCEZO.fuel.usableUSG} USG usable`;
+const ids=['cat','mu','p1','p2','p3','bag','fu','fuel','trip'];
+setDefault('fuel',GCEZO.fuel.usableUSG);
+const save=persist('gcezo-wb-v2',ids);
+function calc(){
+  const k=$('mu').value==='kg'?GCEZO.conv.kgToLb:1, f=$('fu').value==='l'?GCEZO.conv.lToUSG:1, cat=$('cat').value;
+  const r=wbCalc({front:(num('p1')+num('p2'))*k, rear:num('p3')*k, baggage:num('bag')*k, fuelUSG:num('fuel')*f, tripFuelUSG:num('trip')*f, category:cat});
+  const msgs=wbMessages(r,cat);
+  $('status').innerHTML=msgs.length?msgs.map(m=>`<div class="msg bad">${m}</div>`).join(''):'<div class="msg" style="background:var(--okbg);color:var(--ok)">Within POH weight and C.G. limits</div>';
+  const L=GCEZO.limits[cat];
+  $('sum').innerHTML=`<span>Take-off weight</span><b>${fx(r.takeoff.w,1)} lb (${fx(r.takeoff.w*GCEZO.conv.lbToKg,1)} kg)</b>
+   <span>Take-off C.G.</span><b>${fx(r.takeoff.cg,2)} in</b>
+   <span>Landing weight / C.G.</span><b>${fx(r.landing.w,1)} lb / ${fx(r.landing.cg,2)} in</b>
+   <span>Margin to max take-off</span><b>${fx(L.takeoff-r.takeoff.w,1)} lb</b>`;
+  $('env').innerHTML=envelopeSVG([{label:'T/O',w:r.takeoff.w,cg:r.takeoff.cg,ok:r.takeoff.chk.ok},{label:'LDG',w:r.landing.w,cg:r.landing.cg,ok:r.landing.chk.ok}],cat);
+  $('tbl').innerHTML=wbTableHTML(r);
+  $('maths').innerHTML=mathsWB(r,cat,$('mu').value==='kg'?num('p1')+num('p2')+num('p3')+num('bag'):undefined)+
+    ($('fu').value==='l'?eq(String.raw`V_{\text{USG}} = V_{\text{L}}\times 0.264172 = ${fx(num('fuel'),1)}\times 0.264172 = ${res(fx(num('fuel')*GCEZO.conv.lToUSG,2),'USG')}`):'');
+  save();
+}
+document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{const g=b.dataset.f==='full'?GCEZO.fuel.usableUSG:GCEZO.fuel.tabsUSG;$('fuel').value=$('fu').value==='l'?(g*GCEZO.conv.usgToL).toFixed(1):g;calc();});
+ids.forEach(i=>$(i).addEventListener('input',calc));
+calc();
+</script>
+</body></html>

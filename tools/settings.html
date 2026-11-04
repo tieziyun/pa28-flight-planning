@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>G-CEZO Aircraft Settings</title>
+<link rel="stylesheet" href="gcezo.css">
+<script src="gcezo-charts.js"></script><script src="gcezo-lib.js"></script><script src="gcezo-math.js"></script><script src="gcezo-ui.js"></script><script src="gcezo-glossary.js"></script>
+</head><body>
+<main>
+<section class="card">
+  <h2>Aircraft settings</h2>
+  <p class="note" style="margin-top:0">Aircraft data only &mdash; values that change only if the aircraft changes (new weighing, different aircraft). Per-flight assumptions (wind credit, distance and safety factors, reserves, contingency, power setting) are edited on the pages that use them. Defaults come from the POH, the weight schedule (WS) and the club spreadsheets (XLS);
+  where they disagree the most conservative value is the default. Changes are saved in this browser only and apply to all pages.
+  Changed values are highlighted. Reload other open pages after changing.</p>
+  <div class="row" style="margin:8px 0"><button id="resetall">Reset all to defaults</button><span id="saved" class="note"></span></div>
+  <div style="overflow-x:auto"><table id="tbl"></table></div>
+</section>
+</main>
+<script>
+navBar('settings.html');
+let ov=gcezoLoadOverrides();
+function draw(){
+  $('tbl').innerHTML='<tr><th>Setting</th><th>Source</th><th>Default</th><th>Value</th><th></th></tr>'+GCEZO_PARAMS.map(([p,l,src],i)=>{
+    const d=_get(GCEZO_DEFAULTS,p), v=p in ov?ov[p]:d, ch=p in ov&&ov[p]!==d;
+    const inp=typeof d==='boolean'
+      ? `<select data-p="${p}"><option value="true" ${v?'selected':''}>true</option><option value="false" ${!v?'selected':''}>false</option></select>`
+      : typeof d==='string'
+      ? `<input data-p="${p}" type="text" value="${v}" style="width:120px">`
+      : `<input data-p="${p}" type="number" step="any" value="${v}" style="width:120px">`;
+    return `<tr${ch?' style="background:var(--warnbg)"':''}><td>${l}</td><td>${src}</td><td>${d}</td><td>${inp}</td><td>${ch?`<button data-r="${p}">Reset</button>`:''}</td></tr>`;
+  }).join('');
+  document.querySelectorAll('[data-p]').forEach(e=>e.addEventListener('change',()=>{
+    const p=e.dataset.p, d=_get(GCEZO_DEFAULTS,p);
+    let v=typeof d==='boolean'?e.value==='true':typeof d==='number'?parseFloat(e.value):e.value;
+    if(typeof d==='number'&&isNaN(v)) return;
+    if(v===d) delete ov[p]; else ov[p]=v;
+    store(); draw();
+  }));
+  document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{delete ov[b.dataset.r];store();draw();});
+}
+function store(){
+  try{localStorage.setItem('gcezo-settings',JSON.stringify(ov));$('saved').textContent=`Saved. ${Object.keys(ov).length} value(s) changed from default.`;}
+  catch(e){$('saved').textContent='Could not save (browser storage unavailable).';}
+}
+$('resetall').onclick=()=>{ov={};store();draw();};
+draw(); $('saved').textContent=`${Object.keys(ov).length} value(s) changed from default.`;
+</script>
+</body></html>

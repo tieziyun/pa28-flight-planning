@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>G-CEZO Take-off &amp; Landing</title>
+<link rel="stylesheet" href="gcezo.css">
+<script src="gcezo-charts.js"></script><script src="gcezo-lib.js"></script><script src="gcezo-math.js"></script><script src="gcezo-ui.js"></script><script src="gcezo-glossary.js"></script><script src="gcezo-sheets.js"></script>
+</head><body>
+<main>
+<section class="card"><h2>Flight assumptions</h2><div id="assume"></div>
+<p class="note">Shared with the pre-flight page. Conservative defaults: 50% headwind credit, 150% tailwind, no credit for QNH above 1013.</p></section>
+<div class="grid" id="sides" style="margin-top:16px"></div>
+<section class="card" style="margin-top:16px"><h2>Show the maths</h2>
+<details class="maths" open><summary>Equations with the numbers above</summary><div id="maths"></div></details></section>
+<p class="note">Distances from POH Section 5 charts: Fig 5-7 / 5-9 (flaps 0&deg;), Fig 5-11 / 5-13 (flaps 25&deg;), Fig 5-35 (landing, flaps 40&deg;, 2325 lb only, maximum braking).
+Chart conditions: paved, level, dry runway; take-off full power before brake release. Charts were digitised from the scanned POH; each reproduces the POH worked example to within about 3%.
+Factor values default to the club Quick Ref Calculation Sheet, are cumulative and can be edited per flight; the safety factor is applied last. <span id="wn"></span>
+The drawing is schematic (not to vertical scale). It is the pilot's responsibility to confirm these figures with the POH.</p>
+</main>
+<script>
+navBar('performance.html');
+function sideHTML(s,title){
+  return `<section class="card"><h2>${title}</h2>
+   <label class="f">Aerodrome elevation ft <input id="${s}_elev" type="number" value="0"></label>
+   <label class="f">QNH hPa <input id="${s}_qnh" type="number" value="1013"></label>
+   <label class="f">OAT &deg;C <input id="${s}_oat" type="number" value="15"></label>
+   ${s==='to'?`<label class="f">Take-off weight lb <input id="to_w" type="number" value="2325"></label>
+   <label class="f">Flaps <select id="to_flap"><option value="0">0&deg;</option><option value="25">25&deg;</option></select></label>`:''}
+   <label class="f">Runway heading &deg;M <input id="${s}_rwy" type="number" value="270"></label>
+   <label class="f">Wind from &deg;M <input id="${s}_wd" type="number" value="270"></label>
+   <label class="f">Wind speed kt <input id="${s}_ws" type="number" value="0"></label>
+   <label class="f">${s==='to'?'TORA':'LDA'} m <input id="${s}_avail" type="number" value="0"></label>
+   ${factorBoxes(s)}
+   <div id="${s}_out" style="margin-top:10px"></div></section>`;
+}
+$('sides').innerHTML=sideHTML('to','Take-off')+sideHTML('ld','Landing');
+const ids=[...document.querySelectorAll('#sides input,#sides select')].map(e=>e.id);
+const save=persist('gcezo-perf-v3',ids);
+function out(s,gr,d50,p,sheets){
+  const fd=factorDetail(s), req=d50*fd.product*FT_TO_M, avail=num(`${s}_avail`), xw=Math.abs(p.wc.cross);
+  let h=`<div class="kv"><span>Pressure altitude</span><b>${fx(p.pa)} ft</b>
+   <span>Head(+)/tail(&minus;) wind</span><b>${fx(p.wc.head,1)} kt</b>
+   <span>Wind used in chart</span><b>${fx(p.cw,1)} kt</b>
+   <span>Crosswind</span><b>${fx(xw,1)} kt ${xw>GCEZO.speeds.maxXwind?`<span class="pill bad">&gt; ${GCEZO.speeds.maxXwind} kt demo</span>`:''}</b>
+   <span>Ground roll</span><b>${fx(gr)} ft / ${fx(gr*FT_TO_M)} m</b>
+   <span>Over 50 ft</span><b>${fx(d50)} ft / ${fx(d50*FT_TO_M)} m</b>
+   <span>Factor applied</span><b>&times;${fx(fd.product,3)}</b></div>
+   <div style="margin-top:8px">${s==='to'?'TODR':'LDR'} (factored, to/from 50 ft)</div><div class="big">${fx(req)} m</div>`;
+  if(avail>0) h+=`<div>${s==='to'?'TORA':'LDA'} ${fx(avail)} m ${pill(req<=avail,'Sufficient','Insufficient')}</div>`;
+  h+=runwaySVG(s,gr*FT_TO_M,d50*FT_TO_M,req,avail);
+  h+=`<details class="sheetbox" open><summary>Chart worksheet (POH, this flight's path in red)</summary>${sheets}</details>`;
+  h+=p.warn.map(w=>`<div class="msg warn">${w}</div>`).join('');
+  $(s+'_out').innerHTML=h;
+  return mathsPerf({...p,fac:fd});
+}
+function calc(){
+  let m='';
+  for(const s of ['to','ld']){
+    const elev=num(s+'_elev'), qnh=num(s+'_qnh'), pa=pressureAlt(elev,qnh), wc=windComponents(num(s+'_wd'),num(s+'_ws'),num(s+'_rwy')), cw=chartWind(wc.head);
+    const base={kind:s,elev,qnh,pa,oat:num(s+'_oat'),wdir:num(s+'_wd'),wkt:num(s+'_ws'),rwy:num(s+'_rwy'),wc,cw};
+    if(s==='to'){
+      const fl=$('to_flap').value, g=takeoffChart(fl==='0'?'gr0':'gr25',pa,num('to_oat'),num('to_w'),cw), t=takeoffChart(fl==='0'?'to0':'to25',pa,num('to_oat'),num('to_w'),cw);
+      m+=out('to',g.dist,t.dist,{...base,weight:num('to_w'),chart:{gr:g,a50:t},warn:[...new Set([...g.warn,...t.warn])]},
+        takeoffSheetSVG(fl==='0'?'gr0':'gr25',pa,num('to_oat'),num('to_w'),cw)+takeoffSheetSVG(fl==='0'?'to0':'to25',pa,num('to_oat'),num('to_w'),cw));
+    } else {
+      const l=landingChart(pa,num('ld_oat'),cw); m+=out('ld',l.groundRoll,l.over50,{...base,weight:2325,chart:l,warn:l.warn},landingSheetSVG(pa,num('ld_oat'),cw));
+    }
+  }
+  $('maths').innerHTML=m; $('wn').textContent=windNote();
+  save();
+}
+assumptionsPanel('assume',calc);
+ids.forEach(i=>$(i).addEventListener('input',calc)); calc();
+</script>
+</body></html>
