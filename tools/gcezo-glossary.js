@@ -1,6 +1,27 @@
 // Abbreviations: every page wraps known abbreviations in <abbr title="..."> (hover / long-press to read)
 // and lists the ones used on that page in an "Abbreviations" card at the bottom.
 const GLOSSARY = {
+  // POH figures (Section 5 performance, Section 6 weight & balance)
+  'Fig 5-7': 'POH Figure 5-7: 0° flaps take-off ground roll chart',
+  'Fig 5-9': 'POH Figure 5-9: 0° flaps take-off distance over a 50 ft barrier chart',
+  'Fig 5-11': 'POH Figure 5-11: 25° flaps take-off ground roll chart',
+  'Fig 5-13': 'POH Figure 5-13: 25° flaps take-off distance over a 50 ft barrier chart',
+  'Fig 5-15': 'POH Figure 5-15: Engine Performance chart (engine RPM for 55/65/75% power) with the fuel-flow table',
+  'Fig 5-17': 'POH Figure 5-17: Climb Performance chart (rate of climb)',
+  'Fig 5-19': 'POH Figure 5-19: Fuel, Time and Distance to Climb chart',
+  'Fig 5-21': 'POH Figure 5-21: Best Power Cruise Performance chart: true airspeed at 55/65/75% power with best power mixture; fuel 75% 10.0, 65% 8.8, 55% 7.8 GPH',
+  'Fig 5-23': 'POH Figure 5-23: Best Economy Cruise Performance chart: true airspeed at 55/65/75% power with best economy mixture; fuel 75% 8.5, 65% 7.5, 55% 6.6 GPH',
+  'Fig 5-25': 'POH Figure 5-25: Best Power Mixture Range chart',
+  'Fig 5-27': 'POH Figure 5-27: Best Economy Mixture Range chart',
+  'Fig 5-29': 'POH Figure 5-29: Endurance chart',
+  'Fig 5-35': 'POH Figure 5-35: Landing Distance chart (2325 lb, flaps 40°, maximum braking)',
+  'Fig 6-11': 'POH Figure 6-11: Weight and Balance Loading Form (arms for seats, fuel and baggage)',
+  'Fig 6-13': 'POH Figure 6-13: Loading Graph (weight against moment for each loading station)',
+  'Fig 6-15': 'POH Figure 6-15: C.G. Range and Weight (the loading envelope)',
+  'best power': 'mixture leaned for maximum power (richer; faster, more fuel). Lean as per the POH Section 4 leaning instructions',
+  'best economy': 'mixture leaned further for the lowest fuel flow (slower, less fuel). Lean as per the POH Section 4 leaning instructions',
+  'Best power': 'mixture leaned for maximum power (richer; faster, more fuel). Lean as per the POH Section 4 leaning instructions',
+  'Best economy': 'mixture leaned further for the lowest fuel flow (slower, less fuel). Lean as per the POH Section 4 leaning instructions',
   'POH': "Pilot's Operating Handbook (Piper Report VB-1360 for G-CEZO)",
   'AFM': 'Aircraft Flight Manual',
   'WS': 'Weight and Centre of Gravity Schedule (G-CEZO, LW 4072)',

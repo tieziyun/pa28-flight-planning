@@ -162,7 +162,7 @@ const LEG_FUEL = [
   [String.raw`F_{\text{res}}`, 'final reserve fuel'],
   [String.raw`F_{\text{req}}`, 'total fuel required'],
   [String.raw`F_{\text{board}}`, 'fuel on board (US gallons)'],
-  [String.raw`\text{GPH}`, 'fuel flow, US gallons per hour (POH Fig 5-21 / 5-23)'],
+  [String.raw`\text{GPH}`, 'fuel flow, US gallons per hour (POH Fig 5-21 / Fig 5-23)'],
   [String.raw`t,\ t_{\text{alt}},\ t_{\text{res}}`, 'cruise / alternate / reserve time (minutes)'],
   [String.raw`t_{\text{end}}`, 'endurance after start, taxi and run-up (minutes)'],
   [String.raw`3.78541`, 'litres per US gallon'],

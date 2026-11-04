@@ -10,7 +10,8 @@
 <section class="card">
   <h2>Cruise</h2>
   <label class="f">Mixture <select id="mix"><option value="bestPower">Best power (Fig 5-21)</option><option value="bestEconomy">Best economy (Fig 5-23)</option></select></label>
-  <label class="f">Power <select id="pwr"><option>75</option><option>65</option><option>55</option></select></label>
+  <p class="note" style="margin:2px 0 8px">Best power: Fig 5-21 (more fuel, faster). Best economy: Fig 5-23 (less fuel, slower). Lean the mixture as per the POH Section 4 leaning instructions; the fuel flows are from these figures and the Fig 5-15 fuel-flow table.</p>
+  <label class="f">Power % <small>of rated power</small><select id="pwr"><option>75</option><option>65</option><option>55</option></select></label>
   <label class="f">Fuel flow override GPH <small>blank = POH</small><input id="gph" type="number" placeholder=""></label>
   <label class="f">Cruise time min <input id="cruise" type="number" value="60"></label>
   <h2 style="margin-top:14px">Climb (POH Fig 5-19)</h2>

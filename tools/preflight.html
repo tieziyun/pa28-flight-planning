@@ -6,7 +6,20 @@
 <script src="gcezo-charts.js"></script><script src="gcezo-lib.js"></script><script src="gcezo-math.js"></script><script src="gcezo-ui.js"></script><script src="gcezo-glossary.js"></script><script src="gcezo-sheets.js"></script><script src="gcezo-plan.js"></script>
 </head><body>
 <main>
-<section class="card" id="summary"></section>
+<section class="card">
+  <h2>Flight</h2>
+  <div class="kv2">
+  <label class="f">Date <input id="date" type="date"></label>
+  <label class="f">Pilot <input id="pilot" type="text"></label>
+  <label class="f">Departure <input id="dep" type="text"></label>
+  <label class="f">Destination <input id="dest" type="text"></label>
+  <label class="f">ETD (UTC) <input id="etd" type="time"></label>
+  <label class="f">Category <small>weight &amp; C.G. limits</small><select id="cat"><option value="normal">Normal</option><option value="utility">Utility</option></select></label>
+  <label class="f">Flight type <small>Part-NCO reserve</small><select id="ftype"><option value="day">Day</option><option value="dayLocal">Day, local (in sight of aerodrome)</option><option value="night">Night</option></select></label>
+  </div>
+</section>
+
+<section class="card" id="summary" style="margin-top:16px"></section>
 
 <section class="card" style="margin-top:16px">
   <h2><span class="step">1</span>Pilot</h2>
@@ -28,7 +41,7 @@
 <section class="card" style="margin-top:16px">
   <h2><span class="step">4</span>Route &amp; navigation log</h2>
   <div class="kv2">
-    <label class="f">Cruise TAS kt <small>Fig 5-21/5-23</small><input id="nav_tas" data-nav="tas" type="number"></label>
+    <label class="f">Cruise TAS kt <small>Fig 5-21 / Fig 5-23</small><input id="nav_tas" data-nav="tas" type="number"></label>
     <label class="f">Wind from &deg;T <input id="nav_wd" data-nav="wd" type="number"></label>
     <label class="f">Wind speed kt <input id="nav_ws" data-nav="ws" type="number"></label>
     <label class="f">Variation &deg; <span class="varrow"><input id="nav_v" data-nav="v" type="number" step="0.5"><select id="nav_vew" data-nav="vew"><option value="W">W</option><option value="E">E</option></select></span></label>
@@ -42,15 +55,15 @@
   <h2><span class="step">5</span>Fuel</h2>
   <div class="kv2">
     <label class="f">Mixture <select id="mix"><option value="bestPower">Best power</option><option value="bestEconomy">Best economy</option></select></label>
-    <label class="f">Power % <select id="pwr"><option>75</option><option>65</option><option>55</option></select></label>
+    <label class="f">Power % <small>of rated power</small><select id="pwr"><option>75</option><option>65</option><option>55</option></select></label>
     <label class="f">Climb fuel USG <small>Fig 5-19</small><input id="climb" type="number" value="1.4" step="0.1"></label>
     <label class="f">Climb time min <small>Fig 5-19</small><input id="climbt" type="number" value="8.5" step="0.5"></label>
-    <label class="f">Flight type <small>Part-NCO reserve</small><select id="ftype"><option value="day">Day</option><option value="dayLocal">Day, local (in sight of aerodrome)</option><option value="night">Night</option></select></label>
     <label class="f">Contingency % <input id="cont" type="number"></label>
     <label class="f">Final reserve min <input id="res" type="number"></label>
     <label class="f">Alternate min <input id="alt" type="number" value="0"></label>
     <label class="f">Fuel on board USG <small id="fobmax"></small><input id="fob" type="number"></label>
   </div>
+  <p class="note" style="margin:2px 0 8px">Best power: Fig 5-21 (more fuel, faster). Best economy: Fig 5-23 (less fuel, slower). Lean the mixture as per the POH Section 4 leaning instructions; the fuel flows are from these figures and the Fig 5-15 fuel-flow table.</p>
   <div id="fuelout" style="margin-top:10px"></div>
 </section>
 
@@ -58,7 +71,6 @@
   <h2><span class="step">6</span>Weight &amp; balance</h2>
   <div class="grid">
     <div>
-      <label class="f">Category <select id="cat"><option value="normal">Normal</option><option value="utility">Utility</option></select></label>
       <label class="f">Pilot kg <input id="p1" type="number" value="80"></label>
       <label class="f">Front passenger kg <input id="p2" type="number" value="0"></label>
       <label class="f">Rear passenger(s) kg <input id="p3" type="number" value="0"></label>
@@ -146,6 +158,7 @@ setDefault('ftype',GCEZO.plan.flightType); setDefault('mix',GCEZO.plan.mixture);
 setDefault('cont',GCEZO.plan.contingencyPct); setDefault('res',GCEZO.plan.reserveMin); setDefault('fob',GCEZO.fuel.usableUSG);
 const ids=[...document.querySelectorAll('main input:not([data-nav]),main select:not([data-nav])')].map(e=>e.id).filter(i=>i&&!i.startsWith('as_'));
 const save=persist('gcezo-pre-v3',ids);
+if(!$('date').value) $('date').value=new Date().toISOString().slice(0,10);
 
 function calc(){
   const checks=[]; // [ok(true/false/null), text, step]
@@ -210,7 +223,7 @@ function calc(){
   $('maths').innerHTML=maths;
   // summary, in planning order
   const allOk=checks.every(c=>c[0]!==false);
-  let h=`<h2>Pre-flight summary</h2>
+  let h=`<h2>Pre-flight summary &middot; ${esc($('dep').value||'DEP')} &rarr; ${esc($('dest').value||'DEST')} &middot; ${$('date').value}${$('etd').value?' '+$('etd').value+' UTC':''}${$('pilot').value?' &middot; '+esc($('pilot').value):''}</h2>
    <div style="margin-bottom:6px">${pill(allOk,'No limits exceeded (still verify against the POH)','Check items below')}</div>`;
   for(let st=1;st<=8;st++){
     const cs=checks.filter(c=>c[2]===st); if(!cs.length) continue;
