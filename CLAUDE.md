@@ -22,6 +22,7 @@ This project contains aircraft checklists for the PA-28, along with related tool
 - Every calculation must show its equation, with the live numbers substituted ("Show the maths" blocks, helpers in tools/gcezo-ui.js).
 - Every tool page must show the disclaimer banner (DISCLAIMER_HTML in tools/gcezo-ui.js, added by navBar).
 - Every abbreviation shown on a tool page must have an explanation in GLOSSARY (tools/gcezo-glossary.js).
+- Every symbol used in an equation must be explained in the "Symbols" key of its maths block (LEG_WB / LEG_PERF / LEG_FUEL / LEG_NAV in tools/gcezo-ui.js).
 
 ## Repository
 

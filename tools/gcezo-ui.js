@@ -109,6 +109,78 @@ const nm = v => { const s = String(v); return s.startsWith('-') ? `(${s})` : s; 
 const eq = (tex, note) => `<div class="eq">${tex2mml(tex, false)}${note ? `<div class="eqnote">${note}</div>` : ''}</div>`;
 const res = (v, unit) => String.raw`\mathbf{${v}\,\text{${unit}}}`;
 const mh = t => `<h4>${t}</h4>`;
+// Symbols key shown under each equation block: [TeX symbol, meaning]
+const legend = pairs => `<details class="legend" open><summary>Symbols</summary><div class="kv gl">${pairs.map(([t, m]) => `<span>${tex2mml(t, false)}</span><span>${m}</span>`).join('')}</div></details>`;
+const LEG_WB = [
+  [String.raw`W`, 'weight (lb); W<sub>i</sub> = weight of one item on the loading form'],
+  [String.raw`W_{\text{kg}},\ W_{\text{lb}}`, 'the same weight in kilograms / pounds'],
+  [String.raw`V_{\text{USG}},\ V_{\text{L}}`, 'fuel volume in US gallons / litres'],
+  [String.raw`W_{\text{fuel}}`, 'weight of the fuel on board (6 lb per US gallon)'],
+  [String.raw`\text{arm}_i`, 'distance of item i aft of the datum (inches); the datum is 78.4 in ahead of the wing leading edge'],
+  [String.raw`M_i`, 'moment of item i = weight × arm (lb in)'],
+  [String.raw`\sum`, 'sum over all items'],
+  [String.raw`W_{\text{ramp}}`, 'ramp weight: everything on board before engine start'],
+  [String.raw`W_{\text{taxi}}`, 'fuel used for start, taxi and run-up (−7 lb, POH Fig 6-11)'],
+  [String.raw`W_{\text{T/O}}`, 'take-off weight = ramp weight − start/taxi/run-up fuel'],
+  [String.raw`W_{\text{trip}}`, 'weight of the fuel burned on the trip'],
+  [String.raw`W_{\text{LDG}}`, 'landing weight = take-off weight − trip fuel'],
+  [String.raw`\text{CG}`, 'centre of gravity: inches aft of the datum = total moment ÷ total weight'],
+  [String.raw`\text{fwd}(W)`, 'forward C.G. limit at weight W (POH 2.13)'],
+  [String.raw`f_1,\ W_1,\ f_2,\ W_2`, 'the two forward-limit points from POH 2.13 (limit f at weight W); the limit varies in a straight line between them'],
+  [String.raw`W_{\max}`, 'maximum permitted weight (ramp / take-off / landing, POH 2.11)'],
+];
+const LEG_PERF = [
+  [String.raw`\text{PA}`, 'pressure altitude (ft): altitude with the altimeter set to 1013 hPa'],
+  [String.raw`h`, 'aerodrome elevation (ft)'],
+  [String.raw`\text{QNH}`, 'altimeter setting for altitude above mean sea level (hPa)'],
+  [String.raw`\theta`, 'angle between the wind direction and the runway heading'],
+  [String.raw`V`, 'reported wind speed (kt)'],
+  [String.raw`V_{\text{head}},\ V_{\text{tail}}`, 'wind component along the runway: headwind (+) or tailwind'],
+  [String.raw`V_{\text{cross}}`, 'wind component across the runway'],
+  [String.raw`V_{\text{chart}}`, 'wind entered in the chart after the headwind credit / tailwind factor'],
+  [String.raw`D`, 'distance read from the POH chart (ft)'],
+  [String.raw`D_{\text{lower}},\ D_{\text{upper}}`, 'distances on the two printed guide lines either side of the point'],
+  [String.raw`x,\ x_{\text{lower}},\ x_{\text{upper}}`, 'the input value (temperature, pressure altitude, weight or wind) and the values of those two guide lines'],
+  [String.raw`f`, 'interpolation fraction: how far x lies between the two guide lines (0 to 1)'],
+  [String.raw`D_{\text{gr}}`, 'ground roll (ft)'],
+  [String.raw`D_{50}`, 'distance to (take-off) or from (landing) a height of 50 ft (ft)'],
+  [String.raw`D_0`, 'landing distance with no wind (ft)'],
+  [String.raw`D_{15\text{HW}},\ D_{5\text{TW}}`, 'landing distance on the 15 kt headwind / 5 kt tailwind line (ft)'],
+  [String.raw`k_i`, 'one distance factor (slope, surface, aircraft, safety)'],
+  [String.raw`\prod`, 'product: all ticked factors multiplied together'],
+  [String.raw`F`, 'combined factor applied to the chart distance'],
+  [String.raw`0.3048`, 'metres per foot'],
+  [String.raw`\text{TODR}`, 'take-off distance required (factored, to 50 ft), metres'],
+  [String.raw`\text{LDR}`, 'landing distance required (factored, from 50 ft), metres'],
+];
+const LEG_FUEL = [
+  [String.raw`F_{\text{taxi}}`, 'fuel for start, taxi and run-up (US gallons)'],
+  [String.raw`F_{\text{climb}},\ F_{\text{cruise}}`, 'fuel for the climb (POH Fig 5-19) and the cruise (US gallons)'],
+  [String.raw`F_{\text{trip}}`, 'trip fuel = climb + cruise'],
+  [String.raw`F_{\text{cont}}`, 'contingency fuel = a percentage of trip fuel'],
+  [String.raw`F_{\text{alt}}`, 'fuel to fly to the alternate / diversion'],
+  [String.raw`F_{\text{res}}`, 'final reserve fuel'],
+  [String.raw`F_{\text{req}}`, 'total fuel required'],
+  [String.raw`F_{\text{board}}`, 'fuel on board (US gallons)'],
+  [String.raw`\text{GPH}`, 'fuel flow, US gallons per hour (POH Fig 5-21 / 5-23)'],
+  [String.raw`t,\ t_{\text{alt}},\ t_{\text{res}}`, 'cruise / alternate / reserve time (minutes)'],
+  [String.raw`t_{\text{end}}`, 'endurance after start, taxi and run-up (minutes)'],
+  [String.raw`3.78541`, 'litres per US gallon'],
+];
+const LEG_NAV = [
+  [String.raw`W_{\text{dir}},\ W`, 'wind direction (°T, where it blows from) and wind speed (kt)'],
+  [String.raw`\text{TC}`, 'true course: the track to fly over the ground (°T)'],
+  [String.raw`A`, 'wind angle = wind direction − true course'],
+  [String.raw`\text{TAS}`, 'true airspeed (kt)'],
+  [String.raw`\text{WCA}`, 'wind correction angle: + turn right into wind, − turn left'],
+  [String.raw`\text{TH}`, 'true heading = true course + WCA'],
+  [String.raw`\text{GS}`, 'ground speed (kt)'],
+  [String.raw`\text{var}_W,\ \text{var}_E`, 'magnetic variation West / East (°)'],
+  [String.raw`\text{MH}`, 'magnetic heading = true heading + West variation − East variation'],
+  [String.raw`d`, 'leg distance (nm)'],
+  [String.raw`t`, 'leg time (minutes)'],
+  [String.raw`F_{\text{leg}},\ \dot{F}`, 'fuel for the leg, and fuel burn per hour'],
+];
 const where = items => `<div class="eqnote">where ${items.join('; ')}</div>`;
 
 function mathsWB(r, cat, kgTotal) {
@@ -127,7 +199,7 @@ function mathsWB(r, cat, kgTotal) {
     : eq(String.raw`\text{fwd}(W) = f_1 + (W - W_1)\frac{f_2 - f_1}{W_2 - W_1} = ${c.fwd1} + (${fx(w, 1)} - ${c.w1})\frac{${c.fwd2} - ${c.fwd1}}{${c.w2} - ${c.w1}} = ${res(fx(f, 2), 'in')}`);
   h += fl('T/O', r.takeoff.w, r.takeoff.chk.fwd) + fl('LDG', r.landing.w, r.landing.chk.fwd);
   h += eq(String.raw`\text{fwd}(W) \le \text{CG} \le ${GCEZO.cg.aft}\,\text{in}, \quad W \le W_{\max}`, 'POH 2.11 / 2.13: within limits when both hold.');
-  return h;
+  return h + legend(LEG_WB);
 }
 
 // p: {kind, elev, qnh, pa, oat, weight, wdir, wkt, rwy, wc, cw, chart, fac}
@@ -157,11 +229,11 @@ function mathsPerf(p) {
       : eq(String.raw`D_{50} = D_0 + (D_{5\text{TW}} - D_0)\frac{V_{\text{chart}}}{5} = ${fx(l.a50_0)} + (${fx(l.a50TW5)} - ${fx(l.a50_0)})\frac{${fx(-p.cw, 1)}}{5} = ${res(fx(d50), 'ft')}`);
   }
   const fs = p.fac.used.map(u => fx(u[1], 2));
-  h += eq(String.raw`F = \prod f_i = ${fs.length ? fs.join('\\times ') : '1'} = ${res(fx(p.fac.product, 3), '')}`,
+  h += eq(String.raw`F = \prod k_i = ${fs.length ? fs.join('\\times ') : '1'} = ${res(fx(p.fac.product, 3), '')}`,
     p.fac.used.length ? 'Ticked factors: ' + p.fac.used.map(u => `${u[0]} &times;${u[1]}`).join(', ') + '.' : 'No factors ticked.');
   const n = p.kind === 'to' ? 'TODR' : 'LDR';
   h += eq(String.raw`\text{${n}} = D_{50}\times F\times 0.3048 = ${fx(d50)}\times ${fx(p.fac.product, 3)}\times 0.3048 = ${res(fx(d50 * p.fac.product * 0.3048), 'm')}`);
-  return h;
+  return h + legend(LEG_PERF);
 }
 
 // f: {taxi, climb, gph, cruiseMin, cruise, contPct, cont, altMin, alt, resMin, res, req, fob, endur}
@@ -177,7 +249,7 @@ function mathsFuel(f) {
   h += eq(String.raw`F_{\text{req}} = F_{\text{taxi}} + F_{\text{trip}} + F_{\text{cont}} + F_{\text{alt}} + F_{\text{res}} = ${fx(f.taxi, 2)} + ${fx(trip, 2)} + ${fx(f.cont, 2)} + ${fx(f.alt, 2)} + ${fx(f.res, 2)} = ${res(fx(f.req, 2), 'USG')}`);
   h += eq(String.raw`F_{\text{req}}\ \text{(L)} = ${fx(f.req, 2)}\times 3.78541 = ${res(fx(f.req * GCEZO.conv.usgToL, 1), 'L')}, \quad F_{\text{req}}\ \text{(lb)} = ${fx(f.req, 2)}\times ${GCEZO.fuel.lbPerUSG} = ${res(fx(f.req * GCEZO.fuel.lbPerUSG, 1), 'lb')}`);
   h += eq(String.raw`t_{\text{end}} = \frac{F_{\text{board}} - F_{\text{taxi}}}{\text{GPH}}\times 60 = \frac{${fx(f.fob, 1)} - ${fx(f.taxi, 2)}}{${fx(f.gph, 1)}}\times 60 = ${res(fx(f.endur), 'min')}`);
-  return h;
+  return h + legend(LEG_FUEL);
 }
 
 function mathsNav(nc, st) {
@@ -193,7 +265,7 @@ function mathsNav(nc, st) {
     h += eq(String.raw`\text{GS} = ${fx(st.tas)}\cos ${nm(fx(r.wca, 1))}^\circ - ${fx(r.ws, 1)}\cos ${nm(fx(A))}^\circ = ${res(fx(r.gs, 1), 'kt')}`);
     h += eq(String.raw`\text{TH} = ${fx(tc)} + ${nm(fx(r.wca, 1))} = ${fx(r.th, 1)}^\circ, \quad \text{MH} = ${fx(r.th, 1)} ${vs >= 0 ? '+' : '-'} ${fx(Math.abs(vs), 1)} = ${res(fx(r.mh, 1), '°')}, \quad t = \frac{${leg.d}}{${fx(r.gs, 1)}}\times 60 = ${res(fx(r.time, 1), 'min')}`);
   });
-  return h;
+  return h + legend(LEG_NAV);
 }
 
 // ---------------------------------------------------------------------
